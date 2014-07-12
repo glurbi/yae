@@ -101,8 +101,36 @@ std::shared_ptr<monochrome_program> monochrome_program::create() {
     return std::shared_ptr<monochrome_program>(new monochrome_program(monochromeAttributeIndices));
 }
 
+static const std::string monochrome_vert = R"SHADER(
+#version 330
+
+uniform mat4 mvpMatrix;
+uniform vec4 color;
+
+in vec2 vpos;
+
+out vec4 vcolor;
+
+void main(void) {
+	gl_Position = mvpMatrix * vec4(vpos, 0.0f, 1.0f);
+	vcolor = color;
+}
+)SHADER";
+
+static const std::string monochrome_frag = R"SHADER(
+#version 330
+
+in vec4 vcolor;
+
+out vec4 fcolor;
+
+void main(void) {
+	fcolor = vcolor;
+}
+)SHADER";
+
 monochrome_program::monochrome_program(const std::map<int, std::string>& attributeIndices) :
-    program(read_text_file("monochrome.vert"), read_text_file("monochrome.frag"), attributeIndices) {}
+    program(monochrome_vert, monochrome_frag, attributeIndices) {}
 
 void texture_program::render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);
@@ -135,8 +163,41 @@ std::shared_ptr<texture_program> texture_program::create() {
     return std::shared_ptr<texture_program>(new texture_program(textureAttributeIndices));
 }
 
+static const std::string texture_vert = R"SHADER(
+#version 330 core
+
+uniform mat4 mvpMatrix;
+uniform sampler2D texture;
+
+in vec2 pos;
+in vec2 texCoord;
+
+out vec2 vTexCoord;
+
+void main(void)
+{
+	gl_Position = mvpMatrix * vec4(pos, 0.0f, 1.0f);
+    vTexCoord = texCoord;
+}
+)SHADER";
+
+static const std::string texture_frag = R"SHADER(
+#version 330 core
+
+uniform sampler2D texture;
+
+in vec2 vTexCoord;
+
+out vec4 fColor;
+
+void main(void)
+{
+    fColor = texture2D(texture, vTexCoord);
+}
+)SHADER";
+
 texture_program::texture_program(std::map<int, std::string>& attributeIndices) :
-    program(read_text_file("texture.vert"), read_text_file("texture.frag"), attributeIndices) {}
+    program(texture_vert, texture_frag, attributeIndices) {}
 
 void flat_shading_program::render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);
@@ -172,5 +233,46 @@ std::shared_ptr<flat_shading_program> flat_shading_program::Create() {
     return std::shared_ptr<flat_shading_program>(new flat_shading_program(attributeIndices));
 }
 
+static const std::string flat_shading_vert = R"SHADER(
+#version 330 core
+
+uniform mat4 mvpMatrix;
+uniform mat4 mvMatrix;
+uniform vec3 color;
+uniform vec3 lightDir;
+
+in vec3 vPosition;
+in vec3 vNormal;
+out vec4 vColor;
+
+void main(void)
+{
+    vec3 normalEye;
+    float dotProduct;
+
+    /* We transform the normal in eye coordinates. */
+    normalEye = vec3(mvMatrix * vec4(vNormal, 0.0f));
+
+    /* We compute the dot product of the normal in eye coordinates by the light direction.
+    The value will be positive when the diffuse light should be ignored, negative otherwise. */
+    dotProduct = dot(normalEye, lightDir);
+
+    gl_Position = mvpMatrix * vec4(vPosition, 1.0f);
+    vColor = -min(dotProduct, 0.0f) * vec4(color, 1.0f);
+}
+)SHADER";
+
+const std::string flat_shading_frag = R"SHADER(
+#version 330 core
+
+in vec4 vColor;
+out vec4 fColor;
+
+void main(void)
+{
+    fColor = vColor;
+}
+)SHADER";
+
 flat_shading_program::flat_shading_program(const std::map<int, std::string>& attributeIndices) :
-    program(read_text_file("flatShading.vert"), read_text_file("flatShading.frag"), attributeIndices) {}
+    program(flat_shading_vert, flat_shading_frag, attributeIndices) {}
