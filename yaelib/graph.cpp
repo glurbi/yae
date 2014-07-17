@@ -91,6 +91,15 @@ void camera::move_backward(float dist) {
     position_v = position_v - (direction_v * dist);
 }
 
+void camera::open(float factor) {
+    float delta_height = (cv.top - cv.bottom) * (1 - factor);
+    cv.bottom -= delta_height;
+    cv.top += delta_height;
+    float delta_width = (cv.right - cv.left) * (1 - factor);
+    cv.left -= delta_width;
+    cv.right += delta_width;
+}
+
 matrix44 camera::position_and_orient() {
     vector3 centerV = position_v + direction_v;
     return look_at(position_v.x(), position_v.y(), position_v.z(), centerV.x(), centerV.y(), centerV.z(), up_v.x(), up_v.y(), up_v.z());

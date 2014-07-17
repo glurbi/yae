@@ -21,18 +21,6 @@
 #include "timer.hpp"
 #include "context.hpp"
 
-std::shared_ptr<geometry<float>> build_geometry() {
-    buffer_object_builder<float> b;
-    b << -50.0f << -50.0f;
-    b << 50.0f << -50.0f;
-    b << 50.0f << 50.0f;
-    b << -50.0f << 50.0f;
-    auto multi_hero = std::make_shared<geometry<float>>(geometry<float>(b.get_size() / 2));
-    multi_hero->set_vertex_positions(b.build());
-    multi_hero->set_vertex_tex_coords(b.build());
-    return multi_hero;
-}
-
 std::shared_ptr<camera> create_camera(sf::RenderWindow& window) {
     clipping_volume cv;
     int div = 100;
@@ -49,25 +37,31 @@ int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 2;
     settings.depthBits = 16;
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Amazing!", sf::Style::Default, settings);
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Texture", sf::Style::Default, settings);
     //sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Amazing!", sf::Style::Fullscreen, settings);
-    //window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
     window.setMouseCursorVisible(false);
     glewInit();
     glViewport(0, 0, window.getSize().x, window.getSize().y);
+
     timer timer_absolute;
     timer timer_frame;
 
     sf::Image heroImage;
-    if (!heroImage.loadFromFile("smiley.png")) {
-        return;
-    }
+    heroImage.loadFromFile("smiley.png");
 
     heroImage.flipVertically();
     auto heroTexture = std::make_shared<texture>((GLubyte*)heroImage.getPixelsPtr(), heroImage.getSize().x, heroImage.getSize().y);
 
-    std::shared_ptr<geometry<float>> multi_hero = build_geometry();
+    buffer_object_builder<float> b;
+    b << -50.0f << -50.0f;
+    b << 50.0f << -50.0f;
+    b << 50.0f << 50.0f;
+    b << -50.0f << 50.0f;
+    auto multi_hero = std::make_shared<geometry<float>>(geometry<float>(b.get_size() / 2));
+    multi_hero->set_vertex_positions(b.build());
+    multi_hero->set_vertex_tex_coords(b.build());
+
     std::shared_ptr<geometry_node<float>> node = std::make_shared<geometry_node<float>>(geometry_node<float>(multi_hero));
 
     auto camera = create_camera(window);
@@ -83,6 +77,7 @@ int main() {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
         ctx.last_frame_times_seconds[ctx.frame_count % 100] = timer_frame.elapsed();
         double avg = std::accumulate(ctx.last_frame_times_seconds, ctx.last_frame_times_seconds + 100, 0.0) / 100.0;
+        
         if (avg < 0.01) {
             long usec = (long)((0.01 - avg) * 1000000);
             std::this_thread::sleep_for(std::chrono::microseconds(usec));
@@ -93,7 +88,7 @@ int main() {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
-                return;
+                return 0;
             }
             if (event.type == sf::Event::Resized) {
                 camera = create_camera(window);
@@ -102,14 +97,16 @@ int main() {
                 window.setView(view);
             }
             if (event.type == sf::Event::KeyPressed) {
-                return;
+                return 0;
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        camera->rotate_z(1);
+        double dummy;
+        camera->open((float)(1.0+0.05*sin(2.0*3.1415927*(modf(ctx.elapsed_time_seconds, &dummy)-0.5))));
         camera->render(root, ctx, textureProgram);
-        window.pushGLStates();
-        window.popGLStates();
         window.display();
         ctx.frame_count++;
     }
+
 }
