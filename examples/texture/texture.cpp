@@ -1,3 +1,6 @@
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include <GL/glew.h>
 #include <memory>
 #include <GL/glew.h>
 #include <iostream>
@@ -5,13 +8,45 @@
 #include <thread>
 #include <chrono>
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include <stdlib.h>
+#include <vector>
+#include <set>
+#include <memory>
 
+#include "misc.hpp"
+#include "timer.hpp"
+#include "matrix.hpp"
+#include "geometry.hpp"
+#include "graph.hpp"
+#include "program.hpp"
 #include "graph.hpp"
 #include "geometry.hpp"
-#include "amazing.hpp"
 #include "timer.hpp"
 #include "misc.hpp"
+#include "geometry.hpp"
+#include "context.hpp"
+
+class multi_hero_builder_2d {
+public:
+    multi_hero_builder_2d();
+    std::shared_ptr<geometry<float>> build();
+};
+
+multi_hero_builder_2d::multi_hero_builder_2d() {}
+
+std::shared_ptr<geometry<float>> multi_hero_builder_2d::build() {
+    buffer_object_builder<float> b;
+    b << -50.0f << -50.0f;
+    b << 50.0f << -50.0f;
+    b << 50.0f << 50.0f;
+    b << -50.0f << 50.0f;
+    auto multi_hero = std::make_shared<geometry<float>>(geometry<float>(b.get_size() / 2));
+    multi_hero->set_vertex_positions(b.build());
+    multi_hero->set_vertex_tex_coords(b.build());
+    return multi_hero;
+}
+
 
 static std::shared_ptr<camera> create_camera(sf::RenderWindow& window) {
     clipping_volume cv;
@@ -110,4 +145,43 @@ void ending(sf::RenderWindow& window, sf::Font& font, std::string text, std::sha
         ctx.frame_count++;
     }
 
+}
+
+std::shared_ptr<texture> make_hero_texture() {
+    sf::Image hero_image;
+    if (!hero_image.loadFromFile("smiley.png")) {
+        std::cout << "Failed to load smiley.png" << std::endl;
+    }
+    hero_image.flipVertically();
+    return std::make_shared<texture>((GLubyte*)hero_image.getPixelsPtr(), hero_image.getSize().x, hero_image.getSize().y);
+}
+
+std::shared_ptr<texture> make_bad_guy_texture() {
+    sf::Image bad_guy_image;
+    if (!bad_guy_image.loadFromFile("evil.png")) {
+        std::cout << "Failed to load evil.png" << std::endl;
+    }
+    bad_guy_image.flipVertically();
+    return std::make_shared<texture>((GLubyte*)bad_guy_image.getPixelsPtr(), bad_guy_image.getSize().x, bad_guy_image.getSize().y);
+}
+
+int main() {
+    srand((unsigned int)time(0));
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 2;
+    settings.depthBits = 16;
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Amazing!", sf::Style::Default, settings);
+    //sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Amazing!", sf::Style::Fullscreen, settings);
+    //window.setFramerateLimit(60);
+    window.setVerticalSyncEnabled(true);
+    window.setMouseCursorVisible(false);
+    sf::Font font;
+    if (!font.loadFromFile("anonymous.ttf")) {
+        return -1;
+    }
+    glewInit();
+    glViewport(0, 0, window.getSize().x, window.getSize().y);
+    auto hero_texture = make_hero_texture();
+    auto bad_guy_texture = make_bad_guy_texture();
+    ending(window, font, "You win!", hero_texture);
 }
