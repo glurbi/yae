@@ -34,6 +34,7 @@ std::shared_ptr<camera> create_camera(sf::RenderWindow& window) {
 }
 
 int main() {
+
     sf::ContextSettings settings;
     settings.antialiasingLevel = 2;
     settings.depthBits = 16;
@@ -104,6 +105,7 @@ int main() {
         camera->rotate_z(1);
         double dummy;
         camera->open((float)(1.0+0.05*sin(2.0*3.1415927*(modf(ctx.elapsed_time_seconds, &dummy)-0.5))));
+        std::cout << modf(ctx.elapsed_time_seconds, &dummy) << std::endl;
         camera->render(root, ctx, textureProgram);
         window.display();
         ctx.frame_count++;
