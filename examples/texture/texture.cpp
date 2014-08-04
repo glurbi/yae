@@ -66,6 +66,8 @@ int main() {
     std::shared_ptr<geometry_node<float>> node = std::make_shared<geometry_node<float>>(geometry_node<float>(multi_hero));
 
     auto camera = create_camera(window);
+    float cam_height = camera->get_height();
+    float cam_width = camera->get_width();
     auto root = std::make_shared<group>(group());
     root->add(node);
     rendering_context ctx;
@@ -103,9 +105,8 @@ int main() {
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         camera->rotate_z(1);
-        double dummy;
-        camera->open((float)(1.0+0.05*sin(2.0*3.1415927*(modf(ctx.elapsed_time_seconds, &dummy)-0.5))));
-        std::cout << modf(ctx.elapsed_time_seconds, &dummy) << std::endl;
+        float f = (float)(1.0+0.5*sin(2.0*3.1415927*ctx.elapsed_time_seconds));
+        camera->set_opening(cam_width * f, cam_height * f);
         camera->render(root, ctx, textureProgram);
         window.display();
         ctx.frame_count++;

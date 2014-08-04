@@ -100,6 +100,21 @@ void camera::open(float factor) {
     cv.right += delta_width;
 }
 
+void camera::set_opening(float width, float height) {
+    cv.bottom = -height / 2;
+    cv.top = height / 2;
+    cv.left = -width / 2;
+    cv.right = width / 2;
+}
+
+float camera::get_height() {
+    return cv.top - cv.bottom;
+}
+
+float camera::get_width() {
+    return cv.right - cv.left;
+}
+
 matrix44 camera::position_and_orient() {
     vector3 centerV = position_v + direction_v;
     return look_at(position_v.x(), position_v.y(), position_v.z(), centerV.x(), centerV.y(), centerV.z(), up_v.x(), up_v.y(), up_v.z());

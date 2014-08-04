@@ -40,6 +40,9 @@ struct camera {
     void move_forward(float dist);
     void move_backward(float dist);
     void open(float factor);
+    void set_opening(float width, float height);
+    float get_height();
+    float get_width();
     matrix44 position_and_orient();
     vector3 position_v;
     vector3 direction_v;
