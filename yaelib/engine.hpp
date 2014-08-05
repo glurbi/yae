@@ -13,7 +13,7 @@ public:
     ~engine();
     void init();
     void run();
-    void set_callback(std::function<void ()> f);
+    void set_callback(std::function<void (rendering_context&)> f);
     camera& get_camera();
 
 private:

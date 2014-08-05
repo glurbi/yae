@@ -12,7 +12,7 @@ struct engine::impl {
     timer timer_frame;
     rendering_context ctx;
     camera* mycamera;
-    std::function<void ()> callback;
+    std::function<void (rendering_context&)> callback;
     void init();
     void run();
 };
@@ -37,7 +37,7 @@ camera& engine::get_camera() {
     return *pimpl->mycamera;
 }
 
-void engine::set_callback(std::function<void ()> f) {
+void engine::set_callback(std::function<void (rendering_context&)> f) {
     pimpl->callback = f;
 }
 
@@ -88,7 +88,7 @@ void engine::impl::run() {
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        callback();
+        callback(ctx);
         window->display();
         ctx.frame_count++;
     }
