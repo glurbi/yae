@@ -6,6 +6,8 @@
 
 #include "graph.hpp"
 
+namespace yae {
+
 class engine {
 
 public:
@@ -20,5 +22,7 @@ private:
     struct impl;
     std::unique_ptr<impl> pimpl;
 };
+
+}
 
 #endif

@@ -6,7 +6,7 @@
 #include "context.hpp"
 #include "misc.hpp"
 
-struct engine::impl {
+struct yae::engine::impl {
     sf::RenderWindow* window;
     timer timer_absolute;
     timer timer_frame;
@@ -17,27 +17,27 @@ struct engine::impl {
     void run();
 };
 
-engine::engine() {
+yae::engine::engine() {
     pimpl = std::unique_ptr<impl>(new impl());
 }
 
-engine::~engine() {
+yae::engine::~engine() {
 
 }
 
-void engine::init() {
+void yae::engine::init() {
     pimpl->init();
 }
 
-void engine::run() {
+void yae::engine::run() {
     pimpl->run();
 }
 
-camera& engine::get_camera() {
+camera& yae::engine::get_camera() {
     return *pimpl->mycamera;
 }
 
-void engine::set_callback(std::function<void (rendering_context&)> f) {
+void yae::engine::set_callback(std::function<void (rendering_context&)> f) {
     pimpl->callback = f;
 }
 
@@ -53,7 +53,7 @@ camera* create_camera(sf::RenderWindow& window) {
     return new parallel_camera(cv);
 }
 
-void engine::impl::init() {
+void yae::engine::impl::init() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 2;
     settings.depthBits = 16;
@@ -66,7 +66,7 @@ void engine::impl::init() {
     mycamera = create_camera(*window);
 }
 
-void engine::impl::run() {
+void yae::engine::impl::run() {
     while (true) {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
         ctx.last_frame_times_seconds[ctx.frame_count % 100] = timer_frame.elapsed();

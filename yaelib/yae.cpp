@@ -1,5 +1,5 @@
 #include "yae.hpp"
 
-yae::yae() {
+yae::yae::yae() {
 
 }
