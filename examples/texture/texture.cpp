@@ -23,15 +23,17 @@
 #include "context.hpp"
 #include "engine.hpp"
 
-int main() {
-    yae::yae yae;
-    yae::engine engine;
-    engine.init();
-
-    sf::Image heroImage;
-    heroImage.loadFromFile("smiley.png");
-    heroImage.flipVertically();
-    auto heroTexture = std::make_shared<texture>((GLubyte*)heroImage.getPixelsPtr(), heroImage.getSize().x, heroImage.getSize().y);
+int main()
+{
+    auto yae = yae::yae{};
+    auto engine = yae::engine{};
+    auto hero_image = sf::Image{};
+    hero_image.loadFromFile("smiley.png");
+    hero_image.flipVertically();
+    auto pixels = (GLubyte*)hero_image.getPixelsPtr();
+    auto width = hero_image.getSize().x;
+    auto height = hero_image.getSize().y;
+    auto hero_texture = std::make_shared<texture>(pixels, width, height);
 
     buffer_object_builder<float> b;
     b << -50.0f << -50.0f;
@@ -42,18 +44,18 @@ int main() {
     multi_hero->set_vertex_positions(b.build());
     multi_hero->set_vertex_tex_coords(b.build());
 
-    std::shared_ptr<geometry_node<float>> node = std::make_shared<geometry_node<float>>(geometry_node<float>(multi_hero));
+    auto node = std::make_shared<geometry_node<float>>(geometry_node<float>(multi_hero));
 
-    float cam_height = engine.get_camera().get_height();
-    float cam_width = engine.get_camera().get_width();
+    auto cam_height = engine.get_camera().get_height();
+    auto cam_width = engine.get_camera().get_width();
     auto root = std::make_shared<group>(group());
     root->add(node);
-    std::shared_ptr<texture_program> textureProgram = texture_program::create();
-    textureProgram->set_texture(heroTexture);
+    auto textureProgram = texture_program::create();
+    textureProgram->set_texture(hero_texture);
 
     engine.set_callback([&] (rendering_context& ctx) {
         engine.get_camera().rotate_z(0.5);
-        float f = (float)(1.0+0.5*sin(0.1*2.0*3.1415927*ctx.elapsed_time_seconds));
+        auto f = (float)(1.0+0.5*sin(0.1*2.0*3.1415927*ctx.elapsed_time_seconds));
         engine.get_camera().set_opening(cam_width * f, cam_height * f);
         engine.get_camera().render(root, ctx, textureProgram);
     });

@@ -19,14 +19,11 @@ struct yae::engine::impl {
 
 yae::engine::engine() {
     pimpl = std::unique_ptr<impl>(new impl());
+    pimpl->init();
 }
 
 yae::engine::~engine() {
 
-}
-
-void yae::engine::init() {
-    pimpl->init();
 }
 
 void yae::engine::run() {
