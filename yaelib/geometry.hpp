@@ -83,6 +83,10 @@ class buffer_object_builder {
 
 public:
 
+    buffer_object_builder(std::vector<T> data_) {
+        data = data_;
+    }
+
     void* get_data() {
         return &data[0];
     }
@@ -101,11 +105,6 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, id);
         glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(T), &data[0], GL_STATIC_DRAW);
         return id;
-    }
-
-    buffer_object_builder<T>& operator<<(T t) {
-        data.push_back(t);
-        return *this;
     }
 
 private:

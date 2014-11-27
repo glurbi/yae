@@ -26,18 +26,14 @@ int main()
     auto height = hero_image.getSize().y;
     auto hero_texture = std::make_shared<texture>(pixels, width, height);
 
-    buffer_object_builder<float> b;
-    b << -50.0f << -50.0f;
-    b << 50.0f << -50.0f;
-    b << 50.0f << 50.0f;
-    b << -50.0f << 50.0f;
+    buffer_object_builder<float> b({ -50.0f, -50.0f, 50.0f, -50.0f, 50.0f, 50.0f, -50.0f, 50.0f });
     auto multi_hero = std::make_shared<geometry<float>>(b.get_size() / 2);
     multi_hero->set_vertex_positions(b.build());
     multi_hero->set_vertex_tex_coords(b.build());
     auto node = std::make_shared<geometry_node<float>>(multi_hero);
     auto cam_height = engine.get_camera().get_height();
     auto cam_width = engine.get_camera().get_width();
-    auto root = std::make_shared<group>(group());
+    auto root = std::make_shared<group>();
     root->add(node);
     auto textureProgram = texture_program::create();
     textureProgram->set_texture(hero_texture);
