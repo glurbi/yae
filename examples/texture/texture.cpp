@@ -13,15 +13,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "yae.hpp"
-#include "misc.hpp"
-#include "timer.hpp"
-#include "matrix.hpp"
-#include "graph.hpp"
-#include "program.hpp"
-#include "geometry.hpp"
-#include "timer.hpp"
-#include "context.hpp"
-#include "engine.hpp"
 
 int main()
 {
@@ -40,12 +31,10 @@ int main()
     b << 50.0f << -50.0f;
     b << 50.0f << 50.0f;
     b << -50.0f << 50.0f;
-    auto multi_hero = std::make_shared<geometry<float>>(geometry<float>(b.get_size() / 2));
+    auto multi_hero = std::make_shared<geometry<float>>(b.get_size() / 2);
     multi_hero->set_vertex_positions(b.build());
     multi_hero->set_vertex_tex_coords(b.build());
-
-    auto node = std::make_shared<geometry_node<float>>(geometry_node<float>(multi_hero));
-
+    auto node = std::make_shared<geometry_node<float>>(multi_hero);
     auto cam_height = engine.get_camera().get_height();
     auto cam_width = engine.get_camera().get_width();
     auto root = std::make_shared<group>(group());
