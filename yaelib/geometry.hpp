@@ -113,4 +113,34 @@ private:
 
 };
 
+template <class T>
+struct geometry_builder {
+    geometry_builder<T>& operator<<(const std::vector<T>& v)
+    {
+        data.insert(data.end(), v.begin(), v.end());
+        return *this;
+    }
+    std::unique_ptr<geometry<T>> build()
+    {
+        auto b = buffer_object_builder<T> { data };
+        auto g = std::make_unique<geometry<T>>(data.size()/2);
+        g->set_vertex_positions(b.build());
+        return g;
+    }
+private:
+    std::vector<T> data;
+};
+
+template <class T>
+std::unique_ptr<geometry<T>> make_grid(int nx, int ny)
+{
+    auto b = geometry_builder<T>{};
+    for (int y = 0; y < ny; y++) {
+        for (int x = 0; x < nx; x++) {
+            b << std::vector<T>{ (T)x, (T)y, (T)(x + 1), (T)y, (T)(x + 1), (T)(y + 1), (T)x, (T)(y + 1) };
+        }
+    }
+    return b.build();
+}
+
 #endif
