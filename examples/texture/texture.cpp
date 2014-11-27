@@ -1,17 +1,5 @@
-#include <iostream>
-#include <memory>
-#include <iostream>
-#include <numeric>
-#include <thread>
-#include <chrono>
-#include <stdlib.h>
-#include <vector>
-#include <set>
-#include <memory>
-
 #include <GL/glew.h>
 #include <SFML/Graphics.hpp>
-
 #include "yae.hpp"
 
 int main()
