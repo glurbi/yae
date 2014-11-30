@@ -22,23 +22,26 @@ yae::engine::engine() {
     pimpl->init();
 }
 
-yae::engine::~engine() {
-
+yae::engine::~engine()
+{
 }
 
 void yae::engine::run() {
     pimpl->run();
 }
 
-camera& yae::engine::get_camera() {
+camera& yae::engine::get_camera()
+{
     return *pimpl->mycamera;
 }
 
-void yae::engine::set_callback(std::function<void (rendering_context&)> f) {
+void yae::engine::set_callback(std::function<void (rendering_context&)> f)
+{
     pimpl->callback = f;
 }
 
-camera* create_camera(sf::RenderWindow& window) {
+camera* create_camera(sf::RenderWindow& window)
+{
     clipping_volume cv;
     int div = 100;
     cv.right = (float)window.getSize().x / div;
@@ -50,7 +53,8 @@ camera* create_camera(sf::RenderWindow& window) {
     return new parallel_camera(cv);
 }
 
-void yae::engine::impl::init() {
+void yae::engine::impl::init()
+{
     sf::ContextSettings settings;
     settings.antialiasingLevel = 2;
     settings.depthBits = 16;
@@ -62,6 +66,7 @@ void yae::engine::impl::init() {
     ctx.frame_count = 0;
     mycamera = create_camera(*window);
 }
+
 
 void yae::engine::impl::run() {
     while (true) {

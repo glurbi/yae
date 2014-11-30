@@ -5,7 +5,7 @@
 int main()
 {
     auto yae = yae::yae{};
-    auto engine = yae::engine{};
+    yae::engine engine {};
     auto hero_image = sf::Image{};
     hero_image.loadFromFile("smiley.png");
     hero_image.flipVertically();

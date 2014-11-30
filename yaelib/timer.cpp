@@ -5,6 +5,8 @@
 struct timer::timer_private {
     static const double r;
     std::chrono::high_resolution_clock::time_point start;
+    timer_private() {}
+    ~timer_private() {}
 };
 
 const double timer::timer_private::r = (double) std::chrono::high_resolution_clock::period::num / std::chrono::high_resolution_clock::period::den;

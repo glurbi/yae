@@ -6,6 +6,7 @@ cmake_policy(SET CMP0022 OLD)
 
 if (CMAKE_COMPILER_IS_GNUCC)
     add_definitions(-std=c++11)
+    add_definitions(-std=c++1y)
 endif (CMAKE_COMPILER_IS_GNUCC)
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

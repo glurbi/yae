@@ -4,7 +4,7 @@
 int main()
 {
     auto yae = yae::yae{};
-    auto engine = yae::engine{};
+    yae::engine engine {};
     auto grid = make_grid<float>(10,20);
 
     auto node = std::make_shared<geometry_node<float>>(std::move(grid));
