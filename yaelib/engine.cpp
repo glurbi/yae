@@ -11,13 +11,14 @@ struct yae::engine::impl {
     timer timer_absolute;
     timer timer_frame;
     rendering_context ctx;
-    camera* mycamera;
-    std::function<void (rendering_context&)> callback;
+    std::function<void(rendering_context&)> render_callback;
+    std::function<void(rendering_context&, sf::Event&)> resize_callback;
     void init();
     void run();
 };
 
-yae::engine::engine() {
+yae::engine::engine()
+{
     pimpl = std::unique_ptr<impl>(new impl());
     pimpl->init();
 }
@@ -26,49 +27,34 @@ yae::engine::~engine()
 {
 }
 
-void yae::engine::run() {
+void yae::engine::run()
+{
     pimpl->run();
 }
 
-camera& yae::engine::get_camera()
+void yae::engine::set_window(sf::RenderWindow* w)
 {
-    return *pimpl->mycamera;
+    pimpl->window = w;
 }
 
-void yae::engine::set_callback(std::function<void (rendering_context&)> f)
-{
-    pimpl->callback = f;
-}
-
-camera* create_camera(sf::RenderWindow& window)
-{
-    clipping_volume cv;
-    int div = 100;
-    cv.right = (float)window.getSize().x / div;
-    cv.left = (float)-(int)window.getSize().x / div;
-    cv.bottom = (float)-(int)window.getSize().y / div;
-    cv.top = (float)window.getSize().y / div;
-    cv.nearp = 1.0f;
-    cv.farp = -1.0f;
-    return new parallel_camera(cv);
-}
 
 void yae::engine::impl::init()
 {
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 2;
-    settings.depthBits = 16;
-    window = new sf::RenderWindow(sf::VideoMode(800, 600), "Texture", sf::Style::Default, settings);
-    window->setVerticalSyncEnabled(true);
-    window->setMouseCursorVisible(false);
-    glewInit();
-    glViewport(0, 0, window->getSize().x, window->getSize().y);
     ctx.frame_count = 0;
-    mycamera = create_camera(*window);
 }
 
+void yae::engine::set_render_callback(std::function<void(rendering_context&)> f)
+{
+    pimpl->render_callback = f;
+}
 
-void yae::engine::impl::run() {
+void yae::engine::set_resize_callback(std::function<void(rendering_context&, sf::Event&)> f)
+{
+    pimpl->resize_callback = f;
+}
+
+void yae::engine::impl::run()
+{
     while (true) {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
         ctx.last_frame_times_seconds[ctx.frame_count % 100] = timer_frame.elapsed();
@@ -80,18 +66,15 @@ void yae::engine::impl::run() {
                 return;
             }
             if (event.type == sf::Event::Resized) {
-                mycamera = create_camera(*window);
-                glViewport(0, 0, event.size.width, event.size.height);
-                sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
-                window->setView(view);
+                resize_callback(ctx, event);
             }
             if (event.type == sf::Event::KeyPressed) {
                 return;
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        callback(ctx);
+        render_callback(ctx);
         window->display();
         ctx.frame_count++;
     }
-}
+}   

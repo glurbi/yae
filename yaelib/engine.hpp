@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <functional>
+#include <SFML/Graphics.hpp>
 
 #include "graph.hpp"
 
@@ -14,8 +15,10 @@ public:
     engine();
     ~engine();
     void run();
-    void set_callback(std::function<void (rendering_context&)> f);
-    camera& get_camera();
+    void set_render_callback(std::function<void(rendering_context&)> f);
+    void set_resize_callback(std::function<void(rendering_context&, sf::Event&)> f);
+    sf::RenderWindow& get_window();
+    void set_window(sf::RenderWindow*);
 
 private:
     struct impl;
