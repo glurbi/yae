@@ -7,14 +7,13 @@
 #include "misc.hpp"
 
 struct yae::engine::impl {
-    sf::RenderWindow* window;
     timer timer_absolute;
     timer timer_frame;
     rendering_context ctx;
     std::function<void(rendering_context&)> render_callback;
     std::function<void(rendering_context&, sf::Event&)> resize_callback;
     void init();
-    void run();
+    void run(sf::RenderWindow& window);
 };
 
 yae::engine::engine()
@@ -27,16 +26,10 @@ yae::engine::~engine()
 {
 }
 
-void yae::engine::run()
+void yae::engine::run(sf::RenderWindow& window)
 {
-    pimpl->run();
+    pimpl->run(window);
 }
-
-void yae::engine::set_window(sf::RenderWindow* w)
-{
-    pimpl->window = w;
-}
-
 
 void yae::engine::impl::init()
 {
@@ -53,7 +46,7 @@ void yae::engine::set_resize_callback(std::function<void(rendering_context&, sf:
     pimpl->resize_callback = f;
 }
 
-void yae::engine::impl::run()
+void yae::engine::impl::run(sf::RenderWindow& window)
 {
     while (true) {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
@@ -61,7 +54,7 @@ void yae::engine::impl::run()
         timer_frame.reset();
         check_for_opengl_errors();
         sf::Event event;
-        while (window->pollEvent(event)) {
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 return;
             }
@@ -74,7 +67,7 @@ void yae::engine::impl::run()
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         render_callback(ctx);
-        window->display();
+        window.display();
         ctx.frame_count++;
     }
 }   

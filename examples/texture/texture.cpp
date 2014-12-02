@@ -33,7 +33,6 @@ int main()
     auto yae = yae::yae{};
     yae::engine engine {};
     auto window = create_window();
-    engine.set_window(window.get());
     auto camera = create_camera(*window);
     auto hero_image = sf::Image{};
     hero_image.loadFromFile("smiley.png");
@@ -69,5 +68,5 @@ int main()
         window->setView(view);
     });
 
-    engine.run();
+    engine.run(*window);
 }

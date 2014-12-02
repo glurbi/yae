@@ -44,5 +44,5 @@ int main()
         camera->render(root, ctx, monochrome_program);
     });
 
-    engine.run();
+    engine.run(*window);
 }
