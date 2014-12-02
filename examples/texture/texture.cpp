@@ -31,7 +31,7 @@ std::unique_ptr<sf::RenderWindow> create_window()
 int main()
 {
     auto yae = yae::yae{};
-    yae::engine engine {};
+    auto engine = yae::engine{};
     auto window = create_window();
     auto camera = create_camera(*window);
     auto hero_image = sf::Image{};
