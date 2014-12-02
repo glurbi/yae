@@ -12,14 +12,12 @@ struct yae::engine::impl {
     rendering_context ctx;
     std::function<void(rendering_context&)> render_callback;
     std::function<void(rendering_context&, sf::Event&)> resize_callback;
-    void init();
     void run(sf::RenderWindow& window);
 };
 
 yae::engine::engine()
 {
-    pimpl = std::unique_ptr<impl>(new impl());
-    pimpl->init();
+    pimpl = std::unique_ptr<impl>();
 }
 
 yae::engine::~engine()
@@ -29,11 +27,6 @@ yae::engine::~engine()
 void yae::engine::run(sf::RenderWindow& window)
 {
     pimpl->run(window);
-}
-
-void yae::engine::impl::init()
-{
-    ctx.frame_count = 0;
 }
 
 void yae::engine::set_render_callback(std::function<void(rendering_context&)> f)

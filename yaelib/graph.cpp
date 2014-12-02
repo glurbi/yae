@@ -10,6 +10,7 @@
 rendering_context::rendering_context() {
     memset(last_frame_times_seconds, 0, 100);
     elapsed_time_seconds = 0.0;
+    frame_count = 0;
     reset();
 }
 
