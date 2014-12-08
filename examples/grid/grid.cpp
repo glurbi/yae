@@ -39,10 +39,8 @@ int main()
     auto root = std::make_shared<group>();
     root->add(node);
     auto monochrome_program = monochrome_program::create();
-
     engine.set_render_callback([&](rendering_context& ctx) {
         camera->render(root, ctx, monochrome_program);
     });
-
     engine.run(*window);
 }

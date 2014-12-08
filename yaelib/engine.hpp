@@ -11,7 +11,7 @@ namespace yae {
 
 struct engine {
     engine();
-    engine(engine& e);
+    engine(engine&& e);
     ~engine();
     void run(sf::RenderWindow& window);
     void set_render_callback(std::function<void(rendering_context&)> f);

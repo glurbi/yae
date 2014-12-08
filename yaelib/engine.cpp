@@ -16,11 +16,11 @@ struct yae::engine::impl {
 };
 
 yae::engine::engine()
-    : pimpl(std::unique_ptr<impl>())
+    : pimpl(std::make_unique<impl>())
 {
 }
 
-yae::engine::engine(engine& e)
+yae::engine::engine(engine&& e)
 {
     pimpl = std::move(e.pimpl);
 }

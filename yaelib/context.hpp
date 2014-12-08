@@ -29,5 +29,4 @@ private:
     std::vector<matrix44> mv_stack;
 };
 
-
 #endif

@@ -51,14 +51,14 @@ int main()
     auto cam_width = camera->get_width();
     auto root = std::make_shared<group>();
     root->add(node);
-    auto textureProgram = texture_program::create();
-    textureProgram->set_texture(hero_texture);
+    auto texture_program = texture_program::create();
+    texture_program->set_texture(hero_texture);
 
     engine.set_render_callback([&] (rendering_context& ctx) {
         camera->rotate_z(0.5);
         auto f = (float)(1.0+0.5*sin(0.1*2.0*3.1415927*ctx.elapsed_time_seconds));
         camera->set_opening(cam_width * f, cam_height * f);
-        camera->render(root, ctx, textureProgram);
+        camera->render(root, ctx, texture_program);
     });
 
     engine.set_resize_callback([&](rendering_context& ctx, sf::Event& event) {
