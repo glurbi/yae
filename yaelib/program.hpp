@@ -12,7 +12,7 @@
 
 class rendering_context;
 
-template <class T>
+template <class T, GLenum T_primitive>
 class geometry;
 
 template <GLenum type>

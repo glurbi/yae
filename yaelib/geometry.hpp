@@ -11,7 +11,7 @@ enum vertex_attribute {
     NORMAL
 };
 
-template<class T>
+template<class T, GLenum T_primitive = GL_QUADS>
 class geometry {
 
 public:
