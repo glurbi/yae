@@ -40,6 +40,7 @@ int main()
     root->transformation(translation(0.0f, 0.0f, 0.0f));
     root->add(node);
     auto monochrome_program = monochrome_program::create();
+    monochrome_program->set_polygon_mode(GL_LINE);
 
     engine.set_render_callback([&](rendering_context& ctx) {
         camera->render(root, ctx, monochrome_program);
