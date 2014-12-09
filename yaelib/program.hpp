@@ -32,9 +32,13 @@ public:
             const std::string& fragment_shader_source,
             const std::map<int, std::string>& attribute_indices);
     virtual void render(const geometry<float>& geometry, rendering_context& ctx) = 0;
+    inline void set_polygon_face(GLenum polygon_face) { this->polygon_face = polygon_face; }
+    inline void set_polygon_mode(GLenum polygon_mode) { this->polygon_mode = polygon_mode; }
     ~program();
 protected:
     GLuint id;
+    GLenum polygon_face; // GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
+    GLenum polygon_mode; // GL_POINT, GL_LINE, GL_FILL
 private:
     shader<GL_VERTEX_SHADER> vertex_shader;
     shader<GL_FRAGMENT_SHADER> fragment_shader;

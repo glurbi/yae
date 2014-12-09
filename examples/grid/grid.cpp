@@ -10,8 +10,8 @@ std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
     cv.bottom = (float)-(int)window.getSize().y / div;
     cv.top = (float)window.getSize().y / div;
     cv.nearp = 1.0f;
-    cv.farp = -1.0f;
-    return std::make_unique<parallel_camera>(cv);
+    cv.farp = 10.0f;
+    return std::make_unique<perspective_camera>(cv);
 }
 
 std::unique_ptr<sf::RenderWindow> create_window()
@@ -37,10 +37,21 @@ int main()
 
     auto node = std::make_shared<geometry_node<float>>(std::move(grid));
     auto root = std::make_shared<group>();
+    root->transformation(translation(0.0f, 0.0f, 0.0f));
     root->add(node);
     auto monochrome_program = monochrome_program::create();
+
     engine.set_render_callback([&](rendering_context& ctx) {
         camera->render(root, ctx, monochrome_program);
     });
+
+    engine.set_resize_callback([&](rendering_context& ctx, sf::Event& event) {
+        camera = create_camera(*window);
+        camera->move_backward(2.0f);
+        glViewport(0, 0, event.size.width, event.size.height);
+        sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
+        window->setView(view);
+    });
+
     engine.run(*window);
 }

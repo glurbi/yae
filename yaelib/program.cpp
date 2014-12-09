@@ -62,9 +62,9 @@ GLuint shader<type>::get_id() const {
 
 program::program(const std::string& vertexShaderSource,
                  const std::string& fragmentShaderSource,
-                 const std::map<int, std::string>& attributeIndices) :
-    vertex_shader(vertexShaderSource),
-    fragment_shader(fragmentShaderSource)
+                 const std::map<int, std::string>& attributeIndices)
+    : vertex_shader(vertexShaderSource), fragment_shader(fragmentShaderSource),
+      polygon_face(GL_FRONT), polygon_mode(GL_FILL)
 {
     id = glCreateProgram();
     glAttachShader(id, vertex_shader.get_id());
@@ -81,6 +81,7 @@ program::~program() {
 }
 
 void monochrome_program::render(const geometry<float>& geometry, rendering_context& ctx) {
+    glPolygonMode(polygon_face, polygon_mode);
     glUseProgram(id);
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
     glUniformMatrix4fv(matrixUniform, 1, false, ctx.mvp().m);
