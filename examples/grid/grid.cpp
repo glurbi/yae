@@ -11,7 +11,9 @@ std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
     cv.top = (float)window.getSize().y / div;
     cv.nearp = 1.0f;
     cv.farp = 10.0f;
-    return std::make_unique<perspective_camera>(cv);
+    std::unique_ptr<camera> camera = std::make_unique<perspective_camera>(cv);
+    camera->move_backward(2.0f);
+    return camera;
 }
 
 std::unique_ptr<sf::RenderWindow> create_window()
@@ -48,7 +50,6 @@ int main()
 
     engine.set_resize_callback([&](rendering_context& ctx, sf::Event& event) {
         camera = create_camera(*window);
-        camera->move_backward(2.0f);
         glViewport(0, 0, event.size.width, event.size.height);
         sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
         window->setView(view);
