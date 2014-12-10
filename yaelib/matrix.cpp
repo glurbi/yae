@@ -2,26 +2,96 @@
 
 #include "matrix.hpp"
 
-vector3::vector3() { v[0] = 0; v[1] = 0; v[2] = 0; }
-vector3::vector3(float x, float y, float z) { v[0] = x; v[1] = y; v[2] = z; }
-float vector3::x() const { return v[0]; }
-float vector3::y() const { return v[1]; }
-float vector3::z() const { return v[2]; }
+vector3::vector3()
+{
+    v[0] = 0;
+    v[1] = 0;
+    v[2] = 0;
+}
 
-vector3 operator+(const vector3& v1, const vector3& v2) {
+vector3::vector3(float x, float y, float z)
+{
+    v[0] = x;
+    v[1] = y;
+    v[2] = z;
+}
+
+vector3::vector3(float* f)
+{
+    v[0] = f[0];
+    v[1] = f[1];
+    v[2] = f[2];
+}
+
+void vector3::copy(float* dest)
+{
+    dest[0] = v[0];
+    dest[1] = v[1];
+    dest[2] = v[2];
+}
+
+float vector3::x() const
+{
+    return v[0];
+}
+
+float vector3::y() const
+{
+    return v[1];
+}
+
+float vector3::z() const
+{
+    return v[2];
+}
+
+vector3 operator+(const vector3& v1, const vector3& v2)
+{
     return vector3(v1.v[0] + v2.v[0], v1.v[1] + v2.v[1], v1.v[2] + v2.v[2]);
 }
 
-vector3 operator-(const vector3& v1, const vector3& v2) {
+vector3 operator-(const vector3& v1, const vector3& v2)
+{
     return vector3(v1.v[0] - v2.v[0], v1.v[1] - v2.v[1], v1.v[2] - v2.v[2]);
 }
 
-vector3 operator*(const vector3& v, float t) {
+vector3 operator*(const vector3& v, float t)
+{
     return vector3(t*v.v[0], t*v.v[1], t*v.v[2]);
 }
 
-vector4::vector4(float x, float y, float z, float w) { v[0] = x; v[1] = y; v[2] = z; v[3] = w; }
-vector4::vector4(const vector3 vec3, float w) { v[0] = vec3.v[0]; v[1] = vec3.v[1]; v[2] = vec3.v[2]; v[3] = w; }
+vector3 operator*(const matrix44& m, const vector3& v)
+{
+    vector4 v4(v);
+    vector3 v3;
+    v3.v[0] = m.m[0] * v.v[0] + m.m[4] * v.v[1] + m.m[8]  * v.v[2] + m.m[12] * v.v[3];
+    v3.v[1] = m.m[1] * v.v[0] + m.m[5] * v.v[1] + m.m[9]  * v.v[2] + m.m[13] * v.v[3];
+    v3.v[1] = m.m[2] * v.v[0] + m.m[6] * v.v[1] + m.m[10] * v.v[2] + m.m[14] * v.v[3];
+    v3.v[1] = m.m[3] * v.v[0] + m.m[7] * v.v[1] + m.m[11] * v.v[2] + m.m[15] * v.v[3];
+    return v3;
+}
+
+
+vector4::vector4(float x, float y, float z, float w)
+{
+    v[0] = x;
+    v[1] = y;
+    v[2] = z;
+    v[3] = w;
+}
+
+vector4::vector4(const vector3 vec3, float w)
+{
+    v[0] = vec3.v[0];
+    v[1] = vec3.v[1];
+    v[2] = vec3.v[2];
+    v[3] = w;
+}
+
+vector4::vector4(const vector3 vec3)
+    : vector4(vec3, 1.0f)
+{
+}
 
 color::color() : vector4(1, 1, 1, 1) {};
 color::color(float r, float g, float b, float a) : vector4(r, g, b, a) {};
@@ -52,11 +122,6 @@ matrix44 multm(matrix44 m1, matrix44 m2) {
     }
     return m;
 }
-
-template <class... M>
-matrix44 multm(matrix44& m1, matrix44& m2, M&... m) {
-    return multm(m1, multm(m2, m...));
-};
 
 matrix44 identity() {
     matrix44 mat;

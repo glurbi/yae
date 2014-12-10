@@ -127,6 +127,15 @@ struct geometry_builder {
         g->set_vertex_positions(b.build());
         return g;
     }
+    void transformation(const matrix44& tr)
+    {
+        float* p = &data[0];
+        for (int i = 0; i < data.size(0); i += 3) {
+            vector3 tmp(&data[i]);
+            vector3 v3 = tr * tmp;
+            v3.copy(&data[i])
+        }
+    }
 private:
     std::vector<T> data;
 };

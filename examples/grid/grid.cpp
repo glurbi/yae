@@ -35,6 +35,8 @@ int main()
     auto engine = yae::engine{};
     auto window = create_window();
     auto camera = create_camera(*window);
+
+    // USE BUILDER AND APPLY TRANSFORM
     auto grid = make_grid<float>(10,20);
 
     auto node = std::make_shared<geometry_node<float>>(std::move(grid));
