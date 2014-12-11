@@ -65,19 +65,19 @@ void camera::reset()
 
 void camera::rotate_x(float deg)
 {
-    direction_v = normalize(direction_v * cos(to_radians(deg)) + up_v * sin(to_radians(deg)));
+    direction_v = normalize(direction_v * (float) cos(to_radians(deg)) + up_v * (float) sin(to_radians(deg)));
     up_v = cross_product(direction_v, right_v) * -1.0f;
 }
 
 void camera::rotate_y(float deg)
 {
-    direction_v = normalize(direction_v * cos(to_radians(deg)) - right_v * sin(to_radians(deg)));
+    direction_v = normalize(direction_v * (float) cos(to_radians(deg)) - right_v * (float) sin(to_radians(deg)));
     right_v = cross_product(direction_v, up_v);
 }
 
 void camera::rotate_z(float deg)
 {
-    right_v = normalize(right_v * cos(to_radians(deg)) + up_v * sin(to_radians(deg)));
+    right_v = normalize(right_v * (float) cos(to_radians(deg)) + up_v * (float) sin(to_radians(deg)));
     up_v = cross_product(direction_v, right_v) * -1.0f;
 }
 

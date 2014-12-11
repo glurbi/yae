@@ -148,7 +148,7 @@ struct geometry_builder {
     void transformation(const matrix44f& tr)
     {
         float* p = &data[0];
-        for (std::vector<T>::size_type i = 0; i < data.size(); i += 3) {
+        for (typename std::vector<T>::size_type i = 0; i < data.size(); i += 3) {
             vector3f tmp(&data[i]);
             vector3f v3 = tr * tmp;
             v3.copy(&data[i]);

@@ -21,7 +21,7 @@ struct vector4 {
     vector4(const vector3<T> vec3, T w);
     vector4(const vector3<T> vec3);
     vector4();
-    float v[4];
+    T v[4];
     T x() const;
     T y() const;
     T z() const;
@@ -228,38 +228,38 @@ vector4<T>::vector4(const vector3<T> vec3)
 
 template<class T>
 color4<T>::color4()
-    : vector4(1, 1, 1, 1)
+    : vector4<T>(1, 1, 1, 1)
 {
 }
 
 template<class T>
 color4<T>::color4(T r, T g, T b, T a)
-    : vector4(r, g, b, a)
+    : vector4<T>(r, g, b, a)
 {
 }
 
 template<class T>
 T color4<T>::r() const
 {
-    return v[0];
+    return this->v[0];
 }
 
 template<class T>
 T color4<T>::g() const
 {
-    return v[1];
+    return this->v[1];
 }
 
 template<class T>
 T color4<T>::b() const
 {
-    return v[2];
+    return this->v[2];
 }
 
 template<class T>
 T color4<T>::a() const
 {
-    return v[3];
+    return this->v[3];
 }
 
 template<class T>
