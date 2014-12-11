@@ -39,7 +39,7 @@ int main()
     // USE BUILDER AND APPLY TRANSFORM
     auto geomb = geometry_builder<float>{3};
     geomb.make_grid(10,20);
-    geomb.transformation(translation(-10,-15,-3));
+    geomb.transformation(translation(-10.f,-15.f,-3.f));
     auto grid = geomb.build();
 
     auto node = std::make_shared<geometry_node<float>>(std::move(grid));

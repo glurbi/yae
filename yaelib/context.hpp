@@ -13,11 +13,11 @@ class program;
 class rendering_context {
 public:
     rendering_context();
-    void projection(matrix44 mat);
-    void push(matrix44 mat);
+    void projection(matrix44f mat);
+    void push(matrix44f mat);
     void pop();
-    matrix44 mvp();
-    matrix44 mv();
+    matrix44f mvp();
+    matrix44f mv();
     void reset();
     vector3f dir;
     double elapsed_time_seconds;
@@ -25,8 +25,8 @@ public:
     long frame_count;
     std::shared_ptr<program> prog;
 private:
-    std::vector<matrix44> mvp_stack;
-    std::vector<matrix44> mv_stack;
+    std::vector<matrix44f> mvp_stack;
+    std::vector<matrix44f> mv_stack;
 };
 
 #endif

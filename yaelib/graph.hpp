@@ -43,7 +43,7 @@ struct camera {
     void set_opening(float width, float height);
     float get_height();
     float get_width();
-    matrix44 position_and_orient();
+    matrix44f position_and_orient();
     vector3f position_v;
     vector3f direction_v;
     vector3f right_v;
@@ -66,12 +66,12 @@ public:
 class group : public node {
 public:
     group();
-    void transformation(const matrix44& tr);
+    void transformation(const matrix44f& tr);
     void add(std::shared_ptr<node> node);
     virtual void render(rendering_context& ctx);
 protected:
     std::vector<std::shared_ptr<node>> children;
-    matrix44 transform;
+    matrix44f transform;
 };
 
 template<class T>

@@ -15,12 +15,12 @@ rendering_context::rendering_context()
     reset();
 }
 
-void rendering_context::projection(matrix44 mat)
+void rendering_context::projection(matrix44f mat)
 {
     mvp_stack.push_back(multm(mvp_stack.back(), mat));
 }
 
-void rendering_context::push(matrix44 mat)
+void rendering_context::push(matrix44f mat)
 {
     mvp_stack.push_back(multm(mvp_stack.back(), mat));
     mv_stack.push_back(multm(mv_stack.back(), mat));
@@ -36,16 +36,16 @@ void rendering_context::reset()
 {
     mvp_stack.clear();
     mv_stack.clear();
-    mvp_stack.push_back(identity());
-    mv_stack.push_back(identity());
+    mvp_stack.push_back(identity<float>());
+    mv_stack.push_back(identity<float>());
 }
 
-matrix44 rendering_context::mvp()
+matrix44f rendering_context::mvp()
 {
     return mvp_stack.back();
 }
 
-matrix44 rendering_context::mv()
+matrix44f rendering_context::mv()
 {
     return mv_stack.back();
 }
@@ -66,7 +66,7 @@ void camera::reset()
 void camera::rotate_x(float deg)
 {
     direction_v = normalize(direction_v * cos(to_radians(deg)) + up_v * sin(to_radians(deg)));
-    up_v = cross_product(direction_v, right_v) * -1;
+    up_v = cross_product(direction_v, right_v) * -1.0f;
 }
 
 void camera::rotate_y(float deg)
@@ -78,7 +78,7 @@ void camera::rotate_y(float deg)
 void camera::rotate_z(float deg)
 {
     right_v = normalize(right_v * cos(to_radians(deg)) + up_v * sin(to_radians(deg)));
-    up_v = cross_product(direction_v, right_v) * -1;
+    up_v = cross_product(direction_v, right_v) * -1.0f;
 }
 
 void camera::move_right(float dist)
@@ -139,7 +139,7 @@ float camera::get_width()
     return cv.right - cv.left;
 }
 
-matrix44 camera::position_and_orient()
+matrix44f camera::position_and_orient()
 {
     vector3f centerV = position_v + direction_v;
     return look_at(position_v.x(), position_v.y(), position_v.z(), centerV.x(), centerV.y(), centerV.z(), up_v.x(), up_v.y(), up_v.z());
@@ -174,11 +174,11 @@ void parallel_camera::render(std::shared_ptr<node> node, rendering_context& ctx,
 }
 
 group::group()
-    : transform(identity())
+    : transform(identity<float>())
 {
 }
 
-void group::transformation(const matrix44& tr)
+void group::transformation(const matrix44f& tr)
 {
     transform = tr;
 }

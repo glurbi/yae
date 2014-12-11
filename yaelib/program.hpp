@@ -49,11 +49,11 @@ class monochrome_program : public program {
 public:
     monochrome_program(const std::string& monochrome_vert, const std::string& monochrome_frag, const std::map<int, std::string>& attribute_indices);
     virtual void render(const geometry<float>& geometry, rendering_context& ctx);
-    inline void set_color(color col) { this->col = col; }
+    inline void set_color(color4f col) { this->col = col; }
     static std::shared_ptr<monochrome_program> create_2d();
     static std::shared_ptr<monochrome_program> create_3d();
 private:
-    color col;
+    color4f col;
 };
 
 class texture_program : public program {
@@ -69,11 +69,11 @@ private:
 class flat_shading_program : public program {
 public:
     virtual void render(const geometry<float>& geometry, rendering_context& ctx);
-    inline void set_color(color col) { this->col = col; }
+    inline void set_color(color4f col) { this->col = col; }
     static std::shared_ptr<flat_shading_program> Create();
 private:
     flat_shading_program(const std::map<int, std::string>& attribute_indices);
-    color col;
+    color4f col;
 };
 
 #endif

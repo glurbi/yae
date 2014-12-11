@@ -145,7 +145,7 @@ struct geometry_builder {
             }
         }
     }
-    void transformation(const matrix44& tr)
+    void transformation(const matrix44f& tr)
     {
         float* p = &data[0];
         for (std::vector<T>::size_type i = 0; i < data.size(); i += 3) {
