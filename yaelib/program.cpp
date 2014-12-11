@@ -96,23 +96,14 @@ void monochrome_program::render(const geometry<float>& geometry, rendering_conte
     glUseProgram(id);
 }
 
-std::shared_ptr<monochrome_program> monochrome_program::create() {
-    std::map<int, std::string> monochromeAttributeIndices;
-    monochromeAttributeIndices[vertex_attribute::POSITION] = "vpos";
-    return std::shared_ptr<monochrome_program>(new monochrome_program(monochromeAttributeIndices));
-}
-
-static const std::string monochrome_vert = R"SHADER(
+static const std::string monochrome_2d_vert = R"SHADER(
 #version 330
-
 uniform mat4 mvpMatrix;
 uniform vec4 color;
-
 in vec2 vpos;
-
 out vec4 vcolor;
-
-void main(void) {
+void main(void)
+{
 	gl_Position = mvpMatrix * vec4(vpos, 0.0f, 1.0f);
 	vcolor = color;
 }
@@ -120,18 +111,45 @@ void main(void) {
 
 static const std::string monochrome_frag = R"SHADER(
 #version 330
-
 in vec4 vcolor;
-
 out vec4 fcolor;
-
-void main(void) {
+void main(void)
+{
 	fcolor = vcolor;
 }
 )SHADER";
 
-monochrome_program::monochrome_program(const std::map<int, std::string>& attributeIndices) :
-    program(monochrome_vert, monochrome_frag, attributeIndices) {}
+static const std::string monochrome_3d_vert = R"SHADER(
+#version 330
+uniform mat4 mvpMatrix;
+uniform vec4 color;
+in vec3 vpos;
+out vec4 vcolor;
+void main(void)
+{
+	gl_Position = mvpMatrix * vec4(vpos, 1.0f);
+	vcolor = color;
+}
+)SHADER";
+
+monochrome_program::monochrome_program(const std::string& monochrome_vert, const std::string& monochrome_frag, const std::map<int, std::string>& attribute_indices)
+    : program(monochrome_vert, monochrome_frag, attribute_indices)
+{
+}
+
+std::shared_ptr<monochrome_program> monochrome_program::create_2d()
+{
+    std::map<int, std::string> monochromeAttributeIndices;
+    monochromeAttributeIndices[vertex_attribute::POSITION] = "vpos";
+    return std::shared_ptr<monochrome_program>(new monochrome_program(monochrome_2d_vert, monochrome_frag, monochromeAttributeIndices));
+}
+
+std::shared_ptr<monochrome_program> monochrome_program::create_3d()
+{
+    std::map<int, std::string> monochromeAttributeIndices;
+    monochromeAttributeIndices[vertex_attribute::POSITION] = "vpos";
+    return std::shared_ptr<monochrome_program>(new monochrome_program(monochrome_3d_vert, monochrome_frag, monochromeAttributeIndices));
+}
 
 void texture_program::render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);

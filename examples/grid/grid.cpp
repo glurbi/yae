@@ -39,14 +39,14 @@ int main()
     // USE BUILDER AND APPLY TRANSFORM
     auto geomb = geometry_builder<float>{3};
     geomb.make_grid(10,20);
-    geomb.transformation(translation(-10,-15,-10));
+    geomb.transformation(translation(-10,-15,-3));
     auto grid = geomb.build();
 
     auto node = std::make_shared<geometry_node<float>>(std::move(grid));
     auto root = std::make_shared<group>();
     root->transformation(translation(0.0f, 0.0f, 0.0f));
     root->add(node);
-    auto monochrome_program = monochrome_program::create();
+    auto monochrome_program = monochrome_program::create_3d();
     monochrome_program->set_polygon_mode(GL_LINE);
 
     engine.set_render_callback([&](rendering_context& ctx) {
