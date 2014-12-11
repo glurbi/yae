@@ -1,6 +1,9 @@
 #ifndef _matrix_hpp_
 #define _matrix_hpp_
 
+#include <iostream>
+
+// TODO: templatify
 struct vector3 {
     vector3();
     vector3(float x, float y, float z);
@@ -11,6 +14,8 @@ struct vector3 {
     float z() const;
     void copy(float* dest);
 };
+
+std::ostream& operator<<(std::ostream& os, const vector3& v);
 
 struct matrix44
 {
@@ -29,6 +34,7 @@ struct vector4 {
     vector4(float x, float y, float z, float w);
     vector4(const vector3 vec3, float w);
     vector4(const vector3 vec3);
+    vector4();
     float v[4];
 };
 

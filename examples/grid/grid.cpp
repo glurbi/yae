@@ -37,7 +37,10 @@ int main()
     auto camera = create_camera(*window);
 
     // USE BUILDER AND APPLY TRANSFORM
-    auto grid = make_grid<float>(10,20);
+    auto geomb = geometry_builder<float>{3};
+    geomb.make_grid(10,20);
+    geomb.transformation(translation(-10,-15,-10));
+    auto grid = geomb.build();
 
     auto node = std::make_shared<geometry_node<float>>(std::move(grid));
     auto root = std::make_shared<group>();

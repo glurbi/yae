@@ -89,7 +89,7 @@ void monochrome_program::render(const geometry<float>& geometry, rendering_conte
     glUniform4f(colorUniform, col.r(), col.g(), col.b(), col.a());
     glEnableVertexAttribArray(vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.get_positions_id());
-    glVertexAttribPointer(vertex_attribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(vertex_attribute::POSITION, geometry.get_dimensions(), GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, geometry.get_count());
     glDisableVertexAttribArray(vertex_attribute::POSITION);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -143,10 +143,10 @@ void texture_program::render(const geometry<float>& geometry, rendering_context&
     glUniform1i(textureUniform, 0); // we pass the texture unit
     glEnableVertexAttribArray(vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.get_positions_id());
-    glVertexAttribPointer(vertex_attribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(vertex_attribute::POSITION, geometry.get_dimensions(), GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(vertex_attribute::TEXCOORD);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.get_tex_coords_id());
-    glVertexAttribPointer(vertex_attribute::TEXCOORD, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(vertex_attribute::TEXCOORD, geometry.get_dimensions(), GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, 4);
     glDisableVertexAttribArray(vertex_attribute::POSITION);
     glDisableVertexAttribArray(vertex_attribute::TEXCOORD);

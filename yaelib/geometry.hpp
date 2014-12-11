@@ -15,8 +15,8 @@ template<class T, GLenum T_primitive = GL_QUADS>
 class geometry {
 
 public:
-	geometry(GLsizei count_) :
-        count(count_), positions_id(0), tex_coords_id(0), normals_id(0) {}
+	geometry(GLsizei count, GLint dimensions)
+        : count(count), positions_id(0), tex_coords_id(0), normals_id(0), dimensions(dimensions) {}
 	
 	~geometry() {
         glDeleteBuffers(1, &positions_id);
@@ -70,12 +70,17 @@ public:
         return count;
     }
 
+    GLint get_dimensions() const
+    {
+        return dimensions;
+    }
+
 private:
 	GLuint positions_id;
 	GLuint tex_coords_id;
 	GLuint normals_id;
     GLsizei count;
-
+    GLint dimensions;
 };
 
 template <class T>
@@ -115,6 +120,10 @@ private:
 
 template <class T>
 struct geometry_builder {
+    geometry_builder(GLint dimensions)
+        : dimensions(dimensions)
+    {
+    }
     geometry_builder<T>& operator<<(const std::vector<T>& v)
     {
         data.insert(data.end(), v.begin(), v.end());
@@ -123,21 +132,36 @@ struct geometry_builder {
     std::unique_ptr<geometry<T>> build()
     {
         auto b = buffer_object_builder<T> { data };
-        auto g = std::make_unique<geometry<T>>(data.size()/2);
+        auto g = std::make_unique<geometry<T>>(data.size()/dimensions, dimensions);
         g->set_vertex_positions(b.build());
         return g;
+    }
+    void make_grid(int nx, int ny)
+    {
+        for (int y = 0; y < ny; y++) {
+            for (int x = 0; x < nx; x++) {
+                auto v = std::vector<T> { (T)x, (T)y, (T)0, (T)(x + 1), (T)y, (T)0, (T)(x + 1), (T)(y + 1), (T)0, (T)x, (T)(y + 1), (T)0 };
+                data.insert(data.end(), v.begin(), v.end());
+            }
+        }
     }
     void transformation(const matrix44& tr)
     {
         float* p = &data[0];
-        for (int i = 0; i < data.size(0); i += 3) {
+        for (std::vector<T>::size_type i = 0; i < data.size(); i += 3) {
             vector3 tmp(&data[i]);
             vector3 v3 = tr * tmp;
-            v3.copy(&data[i])
+            v3.copy(&data[i]);
+            if (i == 0) {
+                std::cout << tmp << " ";
+                std::cout << vector3(&data[i]) << " ";
+                std::cout << std::endl;
+            }
         }
     }
 private:
     std::vector<T> data;
+    GLint dimensions;
 };
 
 template <class T>

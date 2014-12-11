@@ -45,6 +45,12 @@ float vector3::z() const
     return v[2];
 }
 
+std::ostream& operator<<(std::ostream& os, const vector3& v)
+{
+    os << '[' << v.x() << ' ' << v.y() << ' ' << v.z() << ']';
+    return os;
+}
+
 vector3 operator+(const vector3& v1, const vector3& v2)
 {
     return vector3(v1.v[0] + v2.v[0], v1.v[1] + v2.v[1], v1.v[2] + v2.v[2]);
@@ -62,15 +68,14 @@ vector3 operator*(const vector3& v, float t)
 
 vector3 operator*(const matrix44& m, const vector3& v)
 {
-    vector4 v4(v);
-    vector3 v3;
-    v3.v[0] = m.m[0] * v.v[0] + m.m[4] * v.v[1] + m.m[8]  * v.v[2] + m.m[12] * v.v[3];
-    v3.v[1] = m.m[1] * v.v[0] + m.m[5] * v.v[1] + m.m[9]  * v.v[2] + m.m[13] * v.v[3];
-    v3.v[1] = m.m[2] * v.v[0] + m.m[6] * v.v[1] + m.m[10] * v.v[2] + m.m[14] * v.v[3];
-    v3.v[1] = m.m[3] * v.v[0] + m.m[7] * v.v[1] + m.m[11] * v.v[2] + m.m[15] * v.v[3];
-    return v3;
+    vector4 v4(v, 1.0f);
+    vector4 r;
+    r.v[0] = m.m[0] * v4.v[0] + m.m[4] * v4.v[1] + m.m[8]  * v4.v[2] + m.m[12] * v4.v[3];
+    r.v[1] = m.m[1] * v4.v[0] + m.m[5] * v4.v[1] + m.m[9]  * v4.v[2] + m.m[13] * v4.v[3];
+    r.v[2] = m.m[2] * v4.v[0] + m.m[6] * v4.v[1] + m.m[10] * v4.v[2] + m.m[14] * v4.v[3];
+    r.v[3] = m.m[3] * v4.v[0] + m.m[7] * v4.v[1] + m.m[11] * v4.v[2] + m.m[15] * v4.v[3];
+    return vector3(r.v);
 }
-
 
 vector4::vector4(float x, float y, float z, float w)
 {
@@ -78,6 +83,10 @@ vector4::vector4(float x, float y, float z, float w)
     v[1] = y;
     v[2] = z;
     v[3] = w;
+}
+
+vector4::vector4()
+{
 }
 
 vector4::vector4(const vector3 vec3, float w)
