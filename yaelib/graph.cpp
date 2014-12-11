@@ -50,17 +50,17 @@ matrix44 rendering_context::mv()
     return mv_stack.back();
 }
 
-camera::camera(const clipping_volume& cv) : cv(cv), position_v(vector3(0, 0, 0)),
-        direction_v(vector3(0, 0, -1)), right_v(vector3(1, 0, 0)), up_v(vector3(0, 1, 0))
+camera::camera(const clipping_volume& cv) : cv(cv), position_v(vector3f(0, 0, 0)),
+        direction_v(vector3f(0, 0, -1)), right_v(vector3f(1, 0, 0)), up_v(vector3f(0, 1, 0))
 {
 }
 
 void camera::reset()
 {
-    position_v = vector3(0, 0, 0);
-    direction_v = vector3(0, 0, -1);
-    right_v = vector3(1, 0, 0);
-    up_v = vector3(0, 1, 0);
+    position_v = vector3f(0, 0, 0);
+    direction_v = vector3f(0, 0, -1);
+    right_v = vector3f(1, 0, 0);
+    up_v = vector3f(0, 1, 0);
 }
 
 void camera::rotate_x(float deg)
@@ -141,7 +141,7 @@ float camera::get_width()
 
 matrix44 camera::position_and_orient()
 {
-    vector3 centerV = position_v + direction_v;
+    vector3f centerV = position_v + direction_v;
     return look_at(position_v.x(), position_v.y(), position_v.z(), centerV.x(), centerV.y(), centerV.z(), up_v.x(), up_v.y(), up_v.z());
 }
 

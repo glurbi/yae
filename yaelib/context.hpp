@@ -19,7 +19,7 @@ public:
     matrix44 mvp();
     matrix44 mv();
     void reset();
-    vector3 dir;
+    vector3f dir;
     double elapsed_time_seconds;
     double last_frame_times_seconds[100];
     long frame_count;

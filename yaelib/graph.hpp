@@ -44,10 +44,10 @@ struct camera {
     float get_height();
     float get_width();
     matrix44 position_and_orient();
-    vector3 position_v;
-    vector3 direction_v;
-    vector3 right_v;
-    vector3 up_v;
+    vector3f position_v;
+    vector3f direction_v;
+    vector3f right_v;
+    vector3f up_v;
     clipping_volume cv;
 };
 

@@ -3,37 +3,97 @@
 
 #include <iostream>
 
-// TODO: templatify
+template<class T>
 struct vector3 {
     vector3();
-    vector3(float x, float y, float z);
-    vector3(float* f);
-    float v[3];
-    float x() const;
-    float y() const;
-    float z() const;
-    void copy(float* dest);
+    vector3(T x, T y, T z);
+    vector3(T* tp);
+    T v[3];
+    T x() const;
+    T y() const;
+    T z() const;
+    void copy(T* dest);
 };
 
-std::ostream& operator<<(std::ostream& os, const vector3& v);
+template<class T>
+vector3<T>::vector3()
+{
+    v[0] = (T)0;
+    v[1] = (T)0;
+    v[2] = (T)0;
+}
+
+template<class T>
+vector3<T>::vector3(T x, T y, T z)
+{
+    v[0] = x;
+    v[1] = y;
+    v[2] = z;
+}
+
+template<class T>
+vector3<T>::vector3(T* tp)
+{
+    v[0] = tp[0];
+    v[1] = tp[1];
+    v[2] = tp[2];
+}
+
+template<class T>
+void vector3<T>::copy(T* dest)
+{
+    dest[0] = v[0];
+    dest[1] = v[1];
+    dest[2] = v[2];
+}
+
+template<class T>
+T vector3<T>::x() const
+{
+    return v[0];
+}
+
+template<class T>
+T vector3<T>::y() const
+{
+    return v[1];
+}
+
+template<class T>
+T vector3<T>::z() const
+{
+    return v[2];
+}
+
+template<class T>
+std::ostream& operator<<(std::ostream& os, const vector3<T>& v);
+
+template<class T>
+std::ostream& operator<<(std::ostream& os, const vector3<T>& v)
+{
+    os << '[' << v.x() << ' ' << v.y() << ' ' << v.z() << ']';
+    return os;
+}
+
+typedef vector3<float> vector3f;
 
 struct matrix44
 {
     float m[16];
 };
 
-vector3 operator+(const vector3& v1, const vector3& v2);
+vector3f operator+(const vector3f& v1, const vector3f& v2);
 
-vector3 operator-(const vector3& v1, const vector3& v2);
+vector3f operator-(const vector3f& v1, const vector3f& v2);
 
-vector3 operator*(const vector3& v, float t);
+vector3f operator*(const vector3f& v, float t);
 
-vector3 operator*(const matrix44& m, const vector3& v);
+vector3f operator*(const matrix44& m, const vector3f& v);
 
 struct vector4 {
     vector4(float x, float y, float z, float w);
-    vector4(const vector3 vec3, float w);
-    vector4(const vector3 vec3);
+    vector4(const vector3f vec3, float w);
+    vector4(const vector3f vec3);
     vector4();
     float v[4];
 };
@@ -47,9 +107,9 @@ struct color : vector4 {
     float a() const;
 };
 
-vector3 normalize(vector3 v);
+vector3f normalize(vector3f v);
 
-vector3 cross_product(const vector3& u, const vector3& v);
+vector3f cross_product(const vector3f& u, const vector3f& v);
 
 matrix44 multm(matrix44 m1, matrix44 m2);
 

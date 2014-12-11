@@ -149,12 +149,12 @@ struct geometry_builder {
     {
         float* p = &data[0];
         for (std::vector<T>::size_type i = 0; i < data.size(); i += 3) {
-            vector3 tmp(&data[i]);
-            vector3 v3 = tr * tmp;
+            vector3f tmp(&data[i]);
+            vector3f v3 = tr * tmp;
             v3.copy(&data[i]);
             if (i == 0) {
                 std::cout << tmp << " ";
-                std::cout << vector3(&data[i]) << " ";
+                std::cout << vector3f(&data[i]) << " ";
                 std::cout << std::endl;
             }
         }
