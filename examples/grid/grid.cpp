@@ -36,10 +36,13 @@ int main()
     auto window = create_window();
     auto camera = create_camera(*window);
 
-    // USE BUILDER AND APPLY TRANSFORM
     auto geomb = geometry_builder<float>{3};
-    geomb.make_grid(10,20);
-    geomb.transformation(translation(-10.f,-15.f,-3.f));
+    geomb.make_grid(10,20).store();
+    geomb.make_grid(5, 20).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).store();
+    geomb.make_grid(5, 20).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).transform(translation(10.0f, 0.0f, 0.0f)).store();
+    geomb.make_grid(10, 20).transform(translation(0.0f, 0.0f, -5.0f)).store();
+    geomb.make_grid(10, 5).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).store();
+    geomb.make_grid(10, 5).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).transform(translation(0.0f, 20.0f, 0.0f)).store();
     auto grid = geomb.build();
 
     auto node = std::make_shared<geometry_node<float>>(std::move(grid));
@@ -48,6 +51,7 @@ int main()
     root->add(node);
     auto monochrome_program = monochrome_program::create_3d();
     monochrome_program->set_polygon_mode(GL_LINE);
+    monochrome_program->set_polygon_face(GL_FRONT_AND_BACK);
 
     engine.set_render_callback([&](rendering_context& ctx) {
         camera->render(root, ctx, monochrome_program);

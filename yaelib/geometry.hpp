@@ -124,56 +124,47 @@ struct geometry_builder {
         : dimensions(dimensions)
     {
     }
+    std::unique_ptr<geometry<T>> build()
+    {
+        store();
+        auto b = buffer_object_builder<T> { data };
+        auto g = std::make_unique<geometry<T>>(data.size() / dimensions, dimensions);
+        g->set_vertex_positions(b.build());
+        return g;
+    }
     geometry_builder<T>& operator<<(const std::vector<T>& v)
     {
         data.insert(data.end(), v.begin(), v.end());
         return *this;
     }
-    std::unique_ptr<geometry<T>> build()
-    {
-        auto b = buffer_object_builder<T> { data };
-        auto g = std::make_unique<geometry<T>>(data.size()/dimensions, dimensions);
-        g->set_vertex_positions(b.build());
-        return g;
-    }
-    void make_grid(int nx, int ny)
+    geometry_builder<T>& make_grid(int nx, int ny)
     {
         for (int y = 0; y < ny; y++) {
             for (int x = 0; x < nx; x++) {
                 auto v = std::vector<T> { (T)x, (T)y, (T)0, (T)(x + 1), (T)y, (T)0, (T)(x + 1), (T)(y + 1), (T)0, (T)x, (T)(y + 1), (T)0 };
-                data.insert(data.end(), v.begin(), v.end());
+                tmp.insert(tmp.end(), v.begin(), v.end());
             }
         }
+        return *this;
     }
-    void transformation(const matrix44f& tr)
+    geometry_builder<T>& transform(const matrix44f& tr)
     {
-        float* p = &data[0];
-        for (typename std::vector<T>::size_type i = 0; i < data.size(); i += 3) {
-            vector3f tmp(&data[i]);
-            vector3f v3 = tr * tmp;
-            v3.copy(&data[i]);
-            if (i == 0) {
-                std::cout << tmp << " ";
-                std::cout << vector3f(&data[i]) << " ";
-                std::cout << std::endl;
-            }
+        for (typename std::vector<T>::size_type i = 0; i < tmp.size(); i += 3) {
+            vector3f v3 = tr * vector3f(&tmp[i]);
+            v3.copy(&tmp[i]);
         }
+        return *this;
+    }
+    geometry_builder<T>& store()
+    {
+        data.insert(data.end(), tmp.begin(), tmp.end());
+        tmp.clear();
+        return *this;
     }
 private:
     std::vector<T> data;
+    std::vector<T> tmp;
     GLint dimensions;
 };
-
-template <class T>
-std::unique_ptr<geometry<T>> make_grid(int nx, int ny)
-{
-    auto b = geometry_builder<T>{};
-    for (int y = 0; y < ny; y++) {
-        for (int x = 0; x < nx; x++) {
-            b << std::vector<T>{ (T)x, (T)y, (T)(x + 1), (T)y, (T)(x + 1), (T)(y + 1), (T)x, (T)(y + 1) };
-        }
-    }
-    return b.build();
-}
 
 #endif
