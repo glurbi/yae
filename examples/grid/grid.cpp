@@ -12,7 +12,7 @@ std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
     cv.nearp = 1.0f;
     cv.farp = 10.0f;
     std::unique_ptr<camera> camera = std::make_unique<perspective_camera>(cv);
-    camera->move_backward(2.0f);
+    camera->move_backward(5.0f);
     return camera;
 }
 
@@ -37,12 +37,15 @@ int main()
     auto camera = create_camera(*window);
 
     auto geomb = geometry_builder<float>{3};
-    geomb.make_grid(10,20).store();
-    geomb.make_grid(5, 20).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).store();
-    geomb.make_grid(5, 20).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).transform(translation(10.0f, 0.0f, 0.0f)).store();
-    geomb.make_grid(10, 20).transform(translation(0.0f, 0.0f, -5.0f)).store();
-    geomb.make_grid(10, 5).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).store();
-    geomb.make_grid(10, 5).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).transform(translation(0.0f, 20.0f, 0.0f)).store();
+    geomb.begin();
+    geomb.begin().make_grid(10,20).end();
+    geomb.begin().make_grid(5, 20).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).end();
+    geomb.begin().make_grid(5, 20).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).transform(translation(10.0f, 0.0f, 0.0f)).end();
+    geomb.begin().make_grid(10, 20).transform(translation(0.0f, 0.0f, -5.0f)).end();
+    geomb.begin().make_grid(10, 5).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).end();
+    geomb.begin().make_grid(10, 5).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).transform(translation(0.0f, 20.0f, 0.0f)).end();
+    geomb.transform(translation(-5.0f, -10.0f, 2.5f));
+    geomb.end();
     auto grid = geomb.build();
 
     auto node = std::make_shared<geometry_node<float>>(std::move(grid));

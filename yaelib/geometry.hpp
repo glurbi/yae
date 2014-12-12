@@ -2,6 +2,7 @@
 #define _geometry_hpp_
 
 #include <vector>
+#include <stack>
 #include <memory>
 #include <GL/glew.h>
 
@@ -60,10 +61,10 @@ struct geometry_builder {
     geometry_builder<T>& operator<<(const std::vector<T>& v);
     geometry_builder<T>& make_grid(int nx, int ny);
     geometry_builder<T>& transform(const matrix44f& tr);
-    geometry_builder<T>& store();
+    geometry_builder<T>& begin();
+    geometry_builder<T>& end();
 private:
-    std::vector<T> data;
-    std::vector<T> tmp;
+    std::stack<std::vector<T>> data;
     GLint dimensions;
 };
 
