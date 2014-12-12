@@ -1,3 +1,5 @@
+#include <math.h>
+
 template<class T>
 inline vector3<T>::vector3()
 {
@@ -272,8 +274,8 @@ inline T to_radians(T deg) {
 template<class T>
 matrix44<T> rotation(T deg, T x, T y, T z) {
     matrix44<T> mat;
-    T c = (T)cos(to_radians(deg));
-    T s = (T)sin(to_radians(deg));
+    T c = (T) cos(to_radians(deg));
+    T s = (T) sin(to_radians(deg));
     mat.m[0] = x * x * (1 - c) + c;
     mat.m[1] = y * x * (1 - c) + z * s;
     mat.m[2] = x * z * (1 - c) - y * s;
