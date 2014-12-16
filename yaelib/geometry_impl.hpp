@@ -176,3 +176,19 @@ geometry_builder<T>& geometry_builder<T>::end()
     data.top().insert(data.top().end(), oldtop.begin(), oldtop.end());
     return *this;
 }
+
+template <class T>
+std::unique_ptr<geometry<T>> make_box(int nx, int ny, int nz)
+{
+    auto geomb = geometry_builder<T>{3};
+    geomb.begin();
+    geomb.begin().make_grid(nx, ny).end();
+    geomb.begin().make_grid(nz, ny).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).end();
+    geomb.begin().make_grid(nz, ny).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).transform(translation((T)nx, 0.0f, 0.0f)).end();
+    geomb.begin().make_grid(nx, ny).transform(translation(0.0f, 0.0f, (T)-nz)).end();
+    geomb.begin().make_grid(nx, nz).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).end();
+    geomb.begin().make_grid(nx, nz).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).transform(translation(0.0f, (T)ny, 0.0f)).end();
+    geomb.transform(translation((T)-nx / (T)2, (T)-ny / (T)2, (T)nz / (T)2));
+    geomb.end();
+    return geomb.build();
+}

@@ -36,19 +36,8 @@ int main()
     auto window = create_window();
     auto camera = create_camera(*window);
 
-    auto geomb = geometry_builder<float>{3};
-    geomb.begin();
-    geomb.begin().make_grid(10,20).end();
-    geomb.begin().make_grid(5, 20).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).end();
-    geomb.begin().make_grid(5, 20).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).transform(translation(10.0f, 0.0f, 0.0f)).end();
-    geomb.begin().make_grid(10, 20).transform(translation(0.0f, 0.0f, -5.0f)).end();
-    geomb.begin().make_grid(10, 5).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).end();
-    geomb.begin().make_grid(10, 5).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).transform(translation(0.0f, 20.0f, 0.0f)).end();
-    geomb.transform(translation(-5.0f, -10.0f, 2.5f));
-    geomb.end();
-    auto grid = geomb.build();
-
-    auto node = std::make_shared<geometry_node<float>>(std::move(grid));
+    auto box = make_box<float>(10,20,5);
+    auto node = std::make_shared<geometry_node<float>>(std::move(box));
     auto root = std::make_shared<group>();
     root->transformation(translation(0.0f, 0.0f, 0.0f));
     root->add(node);
