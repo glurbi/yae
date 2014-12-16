@@ -174,13 +174,13 @@ void parallel_camera::render(std::shared_ptr<node> node, rendering_context& ctx,
 }
 
 group::group()
-    : transform(identity<float>())
+: transform_callback([](rendering_context& ctx) { return identity<float>(); })
 {
 }
 
-void group::transformation(const matrix44f& tr)
+void group::set_transform_callback(std::function<matrix44f(rendering_context&)> f)
 {
-    transform = tr;
+    transform_callback = f;
 }
 
 void group::add(std::shared_ptr<node> node)
@@ -190,7 +190,7 @@ void group::add(std::shared_ptr<node> node)
 
 void group::render(rendering_context& ctx)
 {
-    ctx.push(transform);
+    ctx.push(transform_callback(ctx));
     for (auto child : children) {
         child->render(ctx);
     }

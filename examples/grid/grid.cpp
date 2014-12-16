@@ -4,15 +4,15 @@
 std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
 {
     clipping_volume cv;
-    int div = 100;
+    int div = 500;
     cv.right = (float)window.getSize().x / div;
     cv.left = (float)-(int)window.getSize().x / div;
     cv.bottom = (float)-(int)window.getSize().y / div;
     cv.top = (float)window.getSize().y / div;
     cv.nearp = 1.0f;
-    cv.farp = 10.0f;
+    cv.farp = 100.0f;
     std::unique_ptr<camera> camera = std::make_unique<perspective_camera>(cv);
-    camera->move_backward(5.0f);
+    camera->move_backward(20.0f);
     return camera;
 }
 
@@ -39,7 +39,13 @@ int main()
     auto box = make_box<float>(10,20,5);
     auto node = std::make_shared<geometry_node<float>>(std::move(box));
     auto root = std::make_shared<group>();
-    root->transformation(translation(0.0f, 0.0f, 0.0f));
+    root->set_transform_callback([](rendering_context& ctx)
+    {
+        float f = (float)ctx.elapsed_time_seconds;
+        return multm(rotation(10.0f*f, 1.0f, 0.0f, 0.0f),
+                     rotation(20.0f*f, 0.0f, 1.0f, 0.0f),
+                     rotation(50.0f*f, 0.0f, 0.0f, 1.0f));
+    });
     root->add(node);
     auto monochrome_program = monochrome_program::create_3d();
     monochrome_program->set_polygon_mode(GL_LINE);

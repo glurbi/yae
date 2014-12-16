@@ -4,6 +4,7 @@
 #include <math.h>
 #include <vector>
 #include <memory>
+#include <functional>
 
 #include "matrix.hpp"
 #include "geometry.hpp"
@@ -66,12 +67,12 @@ public:
 class group : public node {
 public:
     group();
-    void transformation(const matrix44f& tr);
+    void set_transform_callback(std::function<matrix44f(rendering_context&)> f);
     void add(std::shared_ptr<node> node);
     virtual void render(rendering_context& ctx);
 protected:
     std::vector<std::shared_ptr<node>> children;
-    matrix44f transform;
+    std::function<matrix44f(rendering_context&)> transform_callback;
 };
 
 template<class T>
