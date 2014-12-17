@@ -4,11 +4,11 @@
 std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
 {
     clipping_volume cv;
-    int div = 500;
-    cv.right = (float)window.getSize().x / div;
-    cv.left = (float)-(int)window.getSize().x / div;
-    cv.bottom = (float)-(int)window.getSize().y / div;
-    cv.top = (float)window.getSize().y / div;
+    float ar = (float)window.getSize().x / window.getSize().y;
+    cv.right = 2.0f;
+    cv.left = -2.0f;
+    cv.bottom = -2.0f / ar;
+    cv.top = 2.0f / ar;
     cv.nearp = 1.0f;
     cv.farp = 100.0f;
     std::unique_ptr<camera> camera = std::make_unique<perspective_camera>(cv);
@@ -16,24 +16,11 @@ std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
     return camera;
 }
 
-std::unique_ptr<sf::RenderWindow> create_window()
-{
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 2;
-    settings.depthBits = 16;
-    auto window = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "", sf::Style::Default, settings);
-    window->setVerticalSyncEnabled(true);
-    window->setMouseCursorVisible(false);
-    glewInit();
-    glViewport(0, 0, window->getSize().x, window->getSize().y);
-    return window;
-}
-
 int main()
 {
     auto yae = yae::yae{};
     auto engine = yae::engine{};
-    auto window = create_window();
+    auto window = create_simple_window();
     auto camera = create_camera(*window);
 
     auto box = make_box<float>(10,20,5);

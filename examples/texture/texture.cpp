@@ -15,24 +15,11 @@ std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
     return std::make_unique<parallel_camera>(cv);
 }
 
-std::unique_ptr<sf::RenderWindow> create_window()
-{
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 2;
-    settings.depthBits = 16;
-    auto window = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "", sf::Style::Default, settings);
-    window->setVerticalSyncEnabled(true);
-    window->setMouseCursorVisible(false);
-    glewInit();
-    glViewport(0, 0, window->getSize().x, window->getSize().y);
-    return window;
-}
-
 int main()
 {
     auto yae = yae::yae{};
     auto engine = yae::engine{};
-    auto window = create_window();
+    auto window = create_simple_window();
     auto camera = create_camera(*window);
     auto hero_image = sf::Image{};
     hero_image.loadFromFile("smiley.png");

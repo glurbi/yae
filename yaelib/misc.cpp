@@ -3,6 +3,20 @@
 
 #include "misc.hpp"
 
+
+std::unique_ptr<sf::RenderWindow> create_simple_window()
+{
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 2;
+    settings.depthBits = 16;
+    auto window = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "", sf::Style::Default, settings);
+    window->setVerticalSyncEnabled(true);
+    window->setMouseCursorVisible(false);
+    glewInit();
+    glViewport(0, 0, window->getSize().x, window->getSize().y);
+    return window;
+}
+
 void check_for_opengl_errors() {
     switch (glGetError()) {
     case GL_INVALID_ENUM: std::cout << "GLenum argument out of range" << std::endl; break;
