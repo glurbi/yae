@@ -5,14 +5,16 @@
 #include "misc.hpp"
 #include "context.hpp"
 
-static std::string	read_text_file(const std::string& filename) {
+static std::string	read_text_file(const std::string& filename)
+{
     std::ifstream f(filename);
     std::stringstream buffer;
     buffer << f.rdbuf();
     return buffer.str();
 }
 
-static void check_shader_compile_status(GLuint shaderId) {
+static void check_shader_compile_status(GLuint shaderId)
+{
     GLint compileStatus;
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &compileStatus);
     if (compileStatus == GL_FALSE) {
@@ -26,7 +28,8 @@ static void check_shader_compile_status(GLuint shaderId) {
     }
 }
 
-static void checkProgramLinkStatus(GLuint programId) {
+static void checkProgramLinkStatus(GLuint programId)
+{
     GLint linkStatus;
     glGetProgramiv(programId, GL_LINK_STATUS, &linkStatus);
     if (linkStatus == GL_FALSE) {
@@ -41,7 +44,8 @@ static void checkProgramLinkStatus(GLuint programId) {
 }
 
 template <GLenum type>
-shader<type>::shader(const std::string& source) {
+shader<type>::shader(const std::string& source)
+{
     id = glCreateShader(type);
     const GLchar* str = source.c_str();
     const GLint length = source.length();
@@ -51,16 +55,18 @@ shader<type>::shader(const std::string& source) {
 }
 
 template <GLenum type>
-shader<type>::~shader() {
+shader<type>::~shader()
+ {
     glDeleteShader(id);
 }
 
 template <GLenum type>
-GLuint shader<type>::get_id() const {
+GLuint shader<type>::get_id() const
+{
     return id;
 }
 
-program::program(const std::string& vertexShaderSource,
+shader_program::shader_program(const std::string& vertexShaderSource,
                  const std::string& fragmentShaderSource,
                  const std::map<int, std::string>& attributeIndices)
     : vertex_shader(vertexShaderSource), fragment_shader(fragmentShaderSource),
@@ -76,11 +82,13 @@ program::program(const std::string& vertexShaderSource,
     checkProgramLinkStatus(id);
 }
 
-program::~program() {
+shader_program::~shader_program()
+{
     glDeleteProgram(id);
 }
 
-void monochrome_program::render(const geometry<float>& geometry, rendering_context& ctx) {
+void monochrome_program::render(const geometry<float>& geometry, rendering_context& ctx)
+{
     glPolygonMode(polygon_face, polygon_mode);
     glUseProgram(id);
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
@@ -133,7 +141,7 @@ void main(void)
 )SHADER";
 
 monochrome_program::monochrome_program(const std::string& monochrome_vert, const std::string& monochrome_frag, const std::map<int, std::string>& attribute_indices)
-    : program(monochrome_vert, monochrome_frag, attribute_indices)
+    : shader_program(monochrome_vert, monochrome_frag, attribute_indices)
 {
 }
 
@@ -151,7 +159,8 @@ std::shared_ptr<monochrome_program> monochrome_program::create_3d()
     return std::shared_ptr<monochrome_program>(new monochrome_program(monochrome_3d_vert, monochrome_frag, monochromeAttributeIndices));
 }
 
-void texture_program::render(const geometry<float>& geometry, rendering_context& ctx) {
+void texture_program::render(const geometry<float>& geometry, rendering_context& ctx)
+{
     glUseProgram(id);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, current_texture->get_id());
@@ -171,11 +180,13 @@ void texture_program::render(const geometry<float>& geometry, rendering_context&
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void texture_program::set_texture(std::shared_ptr<texture> t) {
+void texture_program::set_texture(std::shared_ptr<texture> t)
+{
     current_texture = t;
 }
 
-std::shared_ptr<texture_program> texture_program::create() {
+std::shared_ptr<texture_program> texture_program::create()
+{
     std::map<int, std::string> textureAttributeIndices;
     textureAttributeIndices[vertex_attribute::POSITION] = "pos";
     textureAttributeIndices[vertex_attribute::TEXCOORD] = "texCoord";
@@ -216,9 +227,10 @@ void main(void)
 )SHADER";
 
 texture_program::texture_program(std::map<int, std::string>& attributeIndices) :
-    program(texture_vert, texture_frag, attributeIndices) {}
+    shader_program(texture_vert, texture_frag, attributeIndices) {}
 
-void flat_shading_program::render(const geometry<float>& geometry, rendering_context& ctx) {
+void flat_shading_program::render(const geometry<float>& geometry, rendering_context& ctx)
+{
     glUseProgram(id);
 
     GLuint mvpUniform = glGetUniformLocation(id, "mvpMatrix");
@@ -245,11 +257,12 @@ void flat_shading_program::render(const geometry<float>& geometry, rendering_con
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-std::shared_ptr<flat_shading_program> flat_shading_program::Create() {
-    std::map<int, std::string> attributeIndices;
-    attributeIndices[vertex_attribute::POSITION] = "vPosition";
-    attributeIndices[vertex_attribute::NORMAL] = "vNormal";
-    return std::shared_ptr<flat_shading_program>(new flat_shading_program(attributeIndices));
+std::shared_ptr<flat_shading_program> flat_shading_program::create()
+{
+    std::map<int, std::string> attribute_indices;
+    attribute_indices[vertex_attribute::POSITION] = "vPosition";
+    attribute_indices[vertex_attribute::NORMAL] = "vNormal";
+    return std::shared_ptr<flat_shading_program>(new flat_shading_program(attribute_indices));
 }
 
 static const std::string flat_shading_vert = R"SHADER(
@@ -294,4 +307,24 @@ void main(void)
 )SHADER";
 
 flat_shading_program::flat_shading_program(const std::map<int, std::string>& attributeIndices) :
-    program(flat_shading_vert, flat_shading_frag, attributeIndices) {}
+    shader_program(flat_shading_vert, flat_shading_frag, attributeIndices) {}
+
+wireframe_program::wireframe_program()
+: monochrome_program(monochrome_program::create_3d())
+{
+}
+
+void wireframe_program::render(const geometry<float>& geometry, rendering_context& ctx)
+{
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(1.0f, 1.0f);
+    monochrome_program->set_polygon_mode(GL_FILL);
+    monochrome_program->set_polygon_face(GL_FRONT_AND_BACK);
+    monochrome_program->set_color(solid_col);
+    monochrome_program->render(geometry, ctx);
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    monochrome_program->set_polygon_mode(GL_LINE);
+    monochrome_program->set_color(wire_col);
+    monochrome_program->render(geometry, ctx);
+}

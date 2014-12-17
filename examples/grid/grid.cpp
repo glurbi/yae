@@ -9,7 +9,7 @@ std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
     cv.left = -2.0f;
     cv.bottom = -2.0f / ar;
     cv.top = 2.0f / ar;
-    cv.nearp = 1.0f;
+    cv.nearp = 2.0f;
     cv.farp = 100.0f;
     std::unique_ptr<camera> camera = std::make_unique<perspective_camera>(cv);
     camera->move_backward(20.0f);
@@ -34,12 +34,12 @@ int main()
                      rotation(50.0f*f, 0.0f, 0.0f, 1.0f));
     });
     root->add(node);
-    auto monochrome_program = monochrome_program::create_3d();
-    monochrome_program->set_polygon_mode(GL_LINE);
-    monochrome_program->set_polygon_face(GL_FRONT_AND_BACK);
+    std::shared_ptr<wireframe_program> prog = std::make_shared<wireframe_program>();
+    prog->set_solid_color(color4f(0.5f, 0.5f, 0.5f));
+    prog->set_wire_color(color4f(1.0f, 1.0f, 1.0f));
 
     engine.set_render_callback([&](rendering_context& ctx) {
-        camera->render(root, ctx, monochrome_program);
+        camera->render(root, ctx, prog);
     });
 
     engine.set_resize_callback([&](rendering_context& ctx, sf::Event& event) {

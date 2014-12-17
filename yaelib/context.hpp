@@ -8,7 +8,7 @@
 #include "texture.hpp"
 #include "program.hpp"
 
-class program;
+class shader_program;
 
 class rendering_context {
 public:
