@@ -310,7 +310,7 @@ flat_shading_program::flat_shading_program(const std::map<int, std::string>& att
     shader_program(flat_shading_vert, flat_shading_frag, attributeIndices) {}
 
 wireframe_program::wireframe_program()
-: monochrome_program(monochrome_program::create_3d())
+: prog(monochrome_program::create_3d())
 {
 }
 
@@ -319,12 +319,12 @@ void wireframe_program::render(const geometry<float>& geometry, rendering_contex
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(1.0f, 1.0f);
-    monochrome_program->set_polygon_mode(GL_FILL);
-    monochrome_program->set_polygon_face(GL_FRONT_AND_BACK);
-    monochrome_program->set_color(solid_col);
-    monochrome_program->render(geometry, ctx);
+    prog->set_polygon_mode(GL_FILL);
+    prog->set_polygon_face(GL_FRONT_AND_BACK);
+    prog->set_color(solid_col);
+    prog->render(geometry, ctx);
     glDisable(GL_POLYGON_OFFSET_FILL);
-    monochrome_program->set_polygon_mode(GL_LINE);
-    monochrome_program->set_color(wire_col);
-    monochrome_program->render(geometry, ctx);
+    prog->set_polygon_mode(GL_LINE);
+    prog->set_color(wire_col);
+    prog->render(geometry, ctx);
 }

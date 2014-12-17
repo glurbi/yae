@@ -93,7 +93,7 @@ public:
 private:
     color4f solid_col;
     color4f wire_col;
-    std::shared_ptr<monochrome_program> monochrome_program;
+    std::shared_ptr<monochrome_program> prog;
 };
 
 #endif

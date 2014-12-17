@@ -78,10 +78,7 @@ template<class T>
 matrix44<T> multm(matrix44<T> m1, matrix44<T> m2);
 
 template <class T, class... M>
-matrix44<T> multm(matrix44<T>& m1, matrix44<T>& m2, M&... m)
-{
-    return multm(m1, multm(m2, m...));
-};
+matrix44<T> multm(matrix44<T> m1, matrix44<T> m2, M... m);
 
 template <class T>
 matrix44<T> identity();
