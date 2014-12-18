@@ -17,7 +17,8 @@ std::unique_ptr<sf::RenderWindow> create_simple_window()
     return window;
 }
 
-void check_for_opengl_errors() {
+void check_for_opengl_errors()
+{
     switch (glGetError()) {
     case GL_INVALID_ENUM: std::cout << "GLenum argument out of range" << std::endl; break;
     case GL_INVALID_VALUE: std::cout << "Numeric argument out of range" << std::endl; break;

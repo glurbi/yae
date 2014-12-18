@@ -185,7 +185,8 @@ matrix44<T> multm(matrix44<T> m1, matrix44<T> m2, M... m)
 }
 
 template<class T>
-matrix44<T> identity() {
+matrix44<T> identity()
+{
     matrix44<T> mat;
     mat.m[0] = 1;
     mat.m[1] = 0;
@@ -207,7 +208,8 @@ matrix44<T> identity() {
 }
 
 template<class T>
-matrix44<T> frustum(T left, T right, T bottom, T top, T nearp, T farp) {
+matrix44<T> frustum(T left, T right, T bottom, T top, T nearp, T farp)
+{
     matrix44<T> mat;
     mat.m[0] = 2 * nearp / (right - left);
     mat.m[1] = 0.0f;
@@ -229,7 +231,8 @@ matrix44<T> frustum(T left, T right, T bottom, T top, T nearp, T farp) {
 }
 
 template<class T>
-matrix44<T> ortho(T left, T right, T bottom, T top, T nearp, T farp) {
+matrix44<T> ortho(T left, T right, T bottom, T top, T nearp, T farp)
+{
     matrix44<T> mat;
     mat.m[0] = 2 / (right - left);
     mat.m[1] = 0.0f;
@@ -251,7 +254,8 @@ matrix44<T> ortho(T left, T right, T bottom, T top, T nearp, T farp) {
 }
 
 template<class T>
-matrix44<T> translation(T x, T y, T z) {
+matrix44<T> translation(T x, T y, T z)
+{
     matrix44<T> mat;
     mat.m[0] = 1.0f;
     mat.m[1] = 0.0f;
@@ -273,12 +277,14 @@ matrix44<T> translation(T x, T y, T z) {
 }
 
 template<class T>
-inline T to_radians(T deg) {
+inline T to_radians(T deg)
+{
     return deg * 3.1415926f / 180.0f;
 }
 
 template<class T>
-matrix44<T> rotation(T deg, T x, T y, T z) {
+matrix44<T> rotation(T deg, T x, T y, T z)
+{
     matrix44<T> mat;
     T c = (T) cos(to_radians(deg));
     T s = (T) sin(to_radians(deg));
@@ -303,7 +309,8 @@ matrix44<T> rotation(T deg, T x, T y, T z) {
 
 // cf gluLookAt http://www.unix.com/man-page/All/3/gluLookAt/
 template<class T>
-matrix44<T> look_at(T eye_x, T eye_y, T eye_z, T center_x, T center_y, T center_z, T up_x, T up_y, T up_z) {
+matrix44<T> look_at(T eye_x, T eye_y, T eye_z, T center_x, T center_y, T center_z, T up_x, T up_y, T up_z)
+{
     auto f = normalize(vector3<T>(center_x - eye_x, center_y - eye_y, center_z - eye_z));
     auto up = normalize(vector3<T>(up_x, up_y, up_z));
     auto s = cross_product(f, up);
