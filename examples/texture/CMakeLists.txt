@@ -10,7 +10,7 @@ target_link_libraries(${PROGRAM_NAME} ${SFML_LIBRARIES} ${OPENGL_LIBRARIES} ${GL
 
 set_target_properties(${PROGRAM_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
-include_directories(${CMAKE_SOURCE_DIR}/yaelib)
+include_directories(${CMAKE_SOURCE_DIR}/src)
 
 configure_file(smiley.png ${CMAKE_CURRENT_BINARY_DIR}/smiley.png COPYONLY)
 configure_file(smiley.png ${CMAKE_BINARY_DIR}/smiley.png COPYONLY)

@@ -17,6 +17,6 @@ find_package(SFML 2.1 REQUIRED system window graphics network audio)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED glew32)
 
-add_subdirectory (yaelib)
+add_subdirectory (src)
 add_subdirectory (examples)
 
