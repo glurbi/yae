@@ -5,6 +5,8 @@
 #include "misc.hpp"
 #include "context.hpp"
 
+using namespace yae;
+
 static std::string	read_text_file(const std::string& filename)
 {
     std::ifstream f(filename);

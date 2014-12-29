@@ -6,7 +6,9 @@
 #include "context.hpp"
 #include "misc.hpp"
 
-struct yae::engine::impl {
+using namespace yae;
+
+struct engine::impl {
     timer timer_absolute;
     timer timer_frame;
     rendering_context ctx;
@@ -15,36 +17,36 @@ struct yae::engine::impl {
     void run(sf::RenderWindow& window);
 };
 
-yae::engine::engine()
+engine::engine()
     : pimpl(std::make_unique<impl>())
 {
 }
 
-yae::engine::engine(engine&& e)
+engine::engine(engine&& e)
 {
     pimpl = std::move(e.pimpl);
 }
 
-yae::engine::~engine()
+engine::~engine()
 {
 }
 
-void yae::engine::run(sf::RenderWindow& window)
+void engine::run(sf::RenderWindow& window)
 {
     pimpl->run(window);
 }
 
-void yae::engine::set_render_callback(std::function<void(rendering_context&)> f)
+void engine::set_render_callback(std::function<void(rendering_context&)> f)
 {
     pimpl->render_callback = f;
 }
 
-void yae::engine::set_resize_callback(std::function<void(rendering_context&, sf::Event&)> f)
+void engine::set_resize_callback(std::function<void(rendering_context&, sf::Event&)> f)
 {
     pimpl->resize_callback = f;
 }
 
-void yae::engine::impl::run(sf::RenderWindow& window)
+void engine::impl::run(sf::RenderWindow& window)
 {
     while (true) {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();

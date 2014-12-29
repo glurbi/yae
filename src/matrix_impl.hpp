@@ -334,4 +334,3 @@ matrix44<T> look_at(T eye_x, T eye_y, T eye_z, T center_x, T center_y, T center_
     m44.m[15] = 1;
     return multm(m44, translation(-eye_x, -eye_y, -eye_z));
 }
-

@@ -3,6 +3,8 @@
 
 #include <GL/glew.h>
 
+namespace yae {
+
 class texture {
 public:
     texture(GLubyte* data, GLsizei w, GLsizei h);
@@ -11,5 +13,7 @@ public:
 private:
     GLuint id;
 };
+
+}
 
 #endif

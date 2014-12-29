@@ -3,8 +3,7 @@
 
 #include "misc.hpp"
 
-
-std::unique_ptr<sf::RenderWindow> create_simple_window()
+std::unique_ptr<sf::RenderWindow> yae::create_simple_window()
 {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 2;
@@ -17,7 +16,7 @@ std::unique_ptr<sf::RenderWindow> create_simple_window()
     return window;
 }
 
-void check_for_opengl_errors()
+void yae::check_for_opengl_errors()
 {
     switch (glGetError()) {
     case GL_INVALID_ENUM: std::cout << "GLenum argument out of range" << std::endl; break;

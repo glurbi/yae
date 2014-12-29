@@ -12,6 +12,8 @@
 #include "program.hpp"
 #include "context.hpp"
 
+namespace yae {
+
 class node {
 public:
     virtual void render(rendering_context& ctx) = 0;
@@ -85,5 +87,7 @@ public:
 private:
     std::shared_ptr<geometry<T>> geom;
 };
+
+}
 
 #endif

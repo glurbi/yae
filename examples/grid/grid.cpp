@@ -1,6 +1,8 @@
 #include <GL/glew.h>
 #include "yae.hpp"
 
+using namespace yae;
+
 std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
 {
     clipping_volume cv;
@@ -18,8 +20,8 @@ std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
 
 int main()
 {
-    auto yae = yae::yae{};
-    auto engine = yae::engine{};
+    auto yae = ::yae::yae{};
+    auto engine = ::yae::engine{};
     auto window = create_simple_window();
     auto camera = create_camera(*window);
 

@@ -6,6 +6,8 @@
 #include <memory>
 #include <GL/glew.h>
 
+namespace yae {
+
 enum vertex_attribute {
     POSITION,
     TEXCOORD,
@@ -69,5 +71,7 @@ private:
 };
 
 #include "geometry_impl.hpp"
+
+}
 
 #endif

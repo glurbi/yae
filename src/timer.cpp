@@ -2,6 +2,8 @@
 
 #include "timer.hpp"
 
+using namespace yae;
+
 struct timer::timer_private {
     static const double r;
     std::chrono::high_resolution_clock::time_point start;

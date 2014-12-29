@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+namespace yae {
+    
 template<class T>
 struct vector3 {
     vector3();
@@ -109,4 +111,7 @@ typedef color4<float> color4f;
 
 #include "matrix_impl.hpp"
 
+}
+
 #endif
+

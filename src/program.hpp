@@ -10,6 +10,8 @@
 #include "geometry.hpp"
 #include "texture.hpp"
 
+namespace yae {
+
 class rendering_context;
 
 template <class T, GLenum T_primitive>
@@ -95,5 +97,7 @@ private:
     color4f wire_col;
     std::shared_ptr<monochrome_program> prog;
 };
+
+}
 
 #endif

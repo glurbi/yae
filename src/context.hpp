@@ -8,6 +8,8 @@
 #include "texture.hpp"
 #include "program.hpp"
 
+namespace yae {
+
 class shader_program;
 
 class rendering_context {
@@ -28,5 +30,7 @@ private:
     std::vector<matrix44f> mvp_stack;
     std::vector<matrix44f> mv_stack;
 };
+
+}
 
 #endif

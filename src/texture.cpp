@@ -1,5 +1,7 @@
 #include "texture.hpp"
 
+using namespace yae;
+
 texture::texture(GLubyte* data, GLsizei w, GLsizei h)
 {
     glGenTextures(1, &id);

@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace yae {
+    
 class timer {
 public:
     timer();
@@ -13,5 +15,7 @@ private:
     struct timer_private;
     std::unique_ptr<timer_private> p;
 };
+
+}
 
 #endif

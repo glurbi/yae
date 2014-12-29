@@ -7,6 +7,8 @@
 #include "graph.hpp"
 #include "program.hpp"
 
+using namespace yae;
+
 rendering_context::rendering_context()
 {
     memset(last_frame_times_seconds, 0, 100);
