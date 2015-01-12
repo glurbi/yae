@@ -1,7 +1,7 @@
 #ifndef _graph_hpp_
 #define _graph_hpp_
 
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <memory>
 #include <functional>

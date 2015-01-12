@@ -1,7 +1,7 @@
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <memory>
-#include <string.h>
+#include <cstring>
 
 #include "matrix.hpp"
 #include "graph.hpp"

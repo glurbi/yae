@@ -1,5 +1,3 @@
-#include <math.h>
-
 template<class T>
 inline vector3<T>::vector3()
 {
