@@ -1,3 +1,3 @@
 add_subdirectory(texture)
-add_subdirectory(grid)
-add_subdirectory(cube)
+add_subdirectory(block)
+add_subdirectory(mandelbrot)
