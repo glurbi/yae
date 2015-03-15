@@ -70,6 +70,12 @@ private:
     GLint dimensions;
 };
 
+template <class T>
+std::unique_ptr<geometry<T>> make_grid(int nx, int ny);
+
+template <class T>
+std::unique_ptr<geometry<T>> make_box(int nx, int ny, int nz);
+
 #include "geometry_impl.hpp"
 
 }

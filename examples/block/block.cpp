@@ -28,8 +28,7 @@ int main()
     auto box = make_box<float>(10,20,5);
     auto node = std::make_shared<geometry_node<float>>(std::move(box));
     auto root = std::make_shared<group>();
-    root->set_transform_callback([](rendering_context& ctx)
-    {
+    root->set_transform_callback([](rendering_context& ctx) {
         float f = (float)ctx.elapsed_time_seconds;
         return multm(rotation(10.0f*f, 1.0f, 0.0f, 0.0f),
                      rotation(20.0f*f, 0.0f, 1.0f, 0.0f),
