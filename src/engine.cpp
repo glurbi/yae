@@ -54,24 +54,19 @@ void engine::impl::run(SDL_Window* window)
         timer_frame.reset();
         check_for_opengl_errors();
         SDL_Event event;
-        while (1) {
-            SDL_PollEvent(&event);
-            if (SDL_PollEvent(&event)) {
-                if (event.type == SDL_QUIT) {
-                    break;
-                }
-            }
-            /*
-            if (event.type == sf::Event::Resized) {
-                resize_callback(ctx, event);
-            }
-            if (event.type == sf::Event::KeyPressed) {
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+            case SDL_QUIT:
+            case SDL_KEYDOWN:
                 return;
-            }*/
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            render_callback(ctx);
-            SDL_GL_SwapWindow(window);
-            ctx.frame_count++;
+            case SDL_WINDOWEVENT:
+                resize_callback(ctx, event);
+                break;
+            }
         }
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        render_callback(ctx);
+        SDL_GL_SwapWindow(window);
+        ctx.frame_count++;
     }
 }   
