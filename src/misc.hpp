@@ -2,13 +2,13 @@
 #define _misc_hpp_
 
 #include <memory>
-#include <SFML/Graphics.hpp>
+#include <SDL.h>
 
 namespace yae {
 
 void check_for_opengl_errors();
 
-std::unique_ptr<sf::RenderWindow> create_simple_window();
+SDL_Window* create_simple_window();
 
 }
 

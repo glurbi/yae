@@ -3,10 +3,12 @@
 
 using namespace yae;
 
-std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
+std::unique_ptr<camera> create_camera(SDL_Window* window)
 {
     clipping_volume cv;
-    float ar = (float)window.getSize().x / window.getSize().y;
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
+    float ar = (float)w / h;
     cv.right = 2.0f;
     cv.left = -2.0f;
     cv.bottom = -2.0f / ar;
@@ -18,12 +20,12 @@ std::unique_ptr<camera> create_camera(sf::RenderWindow& window)
     return camera;
 }
 
-int main()
+void main()
 {
     auto yae = ::yae::yae{};
     auto engine = ::yae::engine{};
     auto window = create_simple_window();
-    auto camera = create_camera(*window);
+    auto camera = create_camera(window);
 
     auto box = make_box<float>(10,20,5);
     auto node = std::make_shared<geometry_node<float>>(std::move(box));
@@ -43,12 +45,13 @@ int main()
         camera->render(root, ctx, prog);
     });
 
-    engine.set_resize_callback([&](rendering_context& ctx, sf::Event& event) {
+    engine.set_resize_callback([&](rendering_context& ctx, SDL_Event event) {
+        /*
         camera = create_camera(*window);
         glViewport(0, 0, event.size.width, event.size.height);
         sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
-        window->setView(view);
+        window->setView(view);*/
     });
 
-    engine.run(*window);
+    engine.run(window);
 }

@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <functional>
-#include <SFML/Graphics.hpp>
 
 #include "graph.hpp"
 
@@ -13,9 +12,9 @@ struct engine {
     engine();
     engine(engine&& e);
     ~engine();
-    void run(sf::RenderWindow& window);
+    void run(SDL_Window* window);
     void set_render_callback(std::function<void(rendering_context&)> f);
-    void set_resize_callback(std::function<void(rendering_context&, sf::Event&)> f);
+    void set_resize_callback(std::function<void(rendering_context&, SDL_Event event)> f);
 private:
     struct impl;
     std::unique_ptr<impl> pimpl;

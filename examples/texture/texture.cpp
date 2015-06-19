@@ -1,32 +1,35 @@
 #include <GL/glew.h>
-#include <SFML/Graphics.hpp>
 #include "yae.hpp"
 
-std::unique_ptr<yae::camera> create_camera(sf::RenderWindow& window)
+std::unique_ptr<yae::camera> create_camera(SDL_Window* window)
 {
     yae::clipping_volume cv;
     int div = 100;
-    cv.right = (float)window.getSize().x / div;
-    cv.left = (float)-(int)window.getSize().x / div;
-    cv.bottom = (float)-(int)window.getSize().y / div;
-    cv.top = (float)window.getSize().y / div;
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
+    cv.right = (float)w / div;
+    cv.left = (float)-(int)w / div;
+    cv.bottom = (float)-(int)h / div;
+    cv.top = (float)h / div;
     cv.nearp = 1.0f;
     cv.farp = -1.0f;
     return std::make_unique<yae::parallel_camera>(cv);
 }
 
-int main()
+void main()
 {
     auto yae = yae::yae{};
     auto engine = yae::engine{};
     auto window = yae::create_simple_window();
-    auto camera = create_camera(*window);
-    auto hero_image = sf::Image{};
-    hero_image.loadFromFile("smiley.png");
-    hero_image.flipVertically();
-    auto pixels = (GLubyte*)hero_image.getPixelsPtr();
-    auto width = hero_image.getSize().x;
-    auto height = hero_image.getSize().y;
+    auto camera = create_camera(window);
+
+    SDL_RWops* rwop = SDL_RWFromFile("smiley.jpg", "rb");
+    SDL_Surface* hero_image = IMG_LoadJPG_RW(rwop);
+    //hero_image.flipVertically();
+
+    auto pixels = (GLubyte*)hero_image->pixels;
+    auto width = hero_image->w;
+    auto height = hero_image->h;
     auto hero_texture = std::make_shared<yae::texture>(pixels, width, height);
 
     yae::buffer_object_builder<float> b({ -50.0f, -50.0f, 50.0f, -50.0f, 50.0f, 50.0f, -50.0f, 50.0f });
@@ -48,12 +51,12 @@ int main()
         camera->render(root, ctx, texture_program);
     });
 
-    engine.set_resize_callback([&](yae::rendering_context& ctx, sf::Event& event) {
+    engine.set_resize_callback([&](yae::rendering_context& ctx, SDL_Event event) {/*
         camera = create_camera(*window);
         glViewport(0, 0, event.size.width, event.size.height);
         sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
-        window->setView(view);
+        window->setView(view);*/
     });
 
-    engine.run(*window);
+    engine.run(window);
 }
