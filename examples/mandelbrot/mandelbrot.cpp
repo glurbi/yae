@@ -103,11 +103,11 @@ void main()
         camera->render(root, ctx, prog);
     });
 
-    engine.set_resize_callback([&](rendering_context& ctx, SDL_Event event) {/*
-        camera = create_camera(*window);
-        glViewport(0, 0, event.size.width, event.size.height);
-        sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
-        window->setView(view);*/
+    engine.set_resize_callback([&](rendering_context& ctx, SDL_Event event) {
+        int w, h;
+        SDL_GetWindowSize(window, &w, &h);
+        camera = create_camera(window);
+        glViewport(0, 0, w, h);
     });
 
     engine.run(window);

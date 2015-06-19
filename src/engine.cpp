@@ -60,7 +60,11 @@ void engine::impl::run(SDL_Window* window)
             case SDL_KEYDOWN:
                 return;
             case SDL_WINDOWEVENT:
-                resize_callback(ctx, event);
+                switch (event.window.event) {
+                case SDL_WINDOWEVENT_RESIZED:
+                    resize_callback(ctx, event);
+                    break;
+                }
                 break;
             }
         }

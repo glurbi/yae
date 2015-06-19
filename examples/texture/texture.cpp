@@ -23,10 +23,8 @@ void main()
     auto window = yae::create_simple_window();
     auto camera = create_camera(window);
 
-    SDL_RWops* rwop = SDL_RWFromFile("smiley.jpg", "rb");
-    SDL_Surface* hero_image = IMG_LoadJPG_RW(rwop);
-    //hero_image.flipVertically();
-
+    auto rwop = SDL_RWFromFile("smiley.png", "rb");
+    auto hero_image = IMG_LoadPNG_RW(rwop);
     auto pixels = (GLubyte*)hero_image->pixels;
     auto width = hero_image->w;
     auto height = hero_image->h;
@@ -51,11 +49,12 @@ void main()
         camera->render(root, ctx, texture_program);
     });
 
-    engine.set_resize_callback([&](yae::rendering_context& ctx, SDL_Event event) {/*
-        camera = create_camera(*window);
-        glViewport(0, 0, event.size.width, event.size.height);
-        sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
-        window->setView(view);*/
+    engine.set_resize_callback([&](yae::rendering_context& ctx, SDL_Event event) {
+        int w, h;
+        SDL_GetWindowSize(window, &w, &h);
+        std::cout << "FFOO" << std::endl;
+        camera = create_camera(window);
+        glViewport(0, 0, w, h);
     });
 
     engine.run(window);
