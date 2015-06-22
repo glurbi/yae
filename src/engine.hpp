@@ -4,15 +4,17 @@
 #include <memory>
 #include <functional>
 
-#include "graph.hpp"
+#include "yae.hpp"
 
 namespace yae {
+
+class Wwindow;
 
 struct engine {
     engine();
     engine(engine&& e);
     ~engine();
-    void run(SDL_Window* window);
+    void run(Wwindow* win);
     void set_render_callback(std::function<void(rendering_context&)> f);
     void set_resize_callback(std::function<void(rendering_context&, SDL_Event event)> f);
 private:

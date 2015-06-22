@@ -21,27 +21,28 @@
 
 namespace yae {
 
-class window;
+class Wwindow {
+public:
+    virtual int width() = 0;
+    virtual int height() = 0;
+    virtual void swap() = 0;
+};
 
 template<class T>
 class yae {
 public:
 
-    yae();
+    yae() {}
 
-    static const int quit = T::quit;
-    static const int keydown = T::keydown;
-    static const int window_resized = T::window_resized;
+    const int quit = T::quit;
+    const int keydown = T::keydown;
+    const int window_resized = T::window_resized;
 
-    static std::unique_ptr<window> create_simple_window();
-};
-
-class window {
-
+    std::unique_ptr<Wwindow> create_simple_window() { return backend.create_simple_window(); }
+private:
+    T backend;
 };
 
 }
-
-#include "yae_impl.hpp"
 
 #endif

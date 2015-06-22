@@ -69,11 +69,11 @@ static std::shared_ptr<mandelbrot_program> create_mandelbrot_program()
     return std::shared_ptr<mandelbrot_program>(new mandelbrot_program(attribute_indices));
 }
 
-std::unique_ptr<camera> create_camera(SDL_Window* window)
+std::unique_ptr<camera> create_camera(Wwindow* win)
 {
     clipping_volume cv;
-    int w, h;
-    SDL_GetWindowSize(window, &w, &h);
+    int w = win->width();
+    int h = win->height();
     float ar = (float)w / h;
     cv.right = 1.5f;
     cv.left = -2.5f;
@@ -89,8 +89,8 @@ void main()
 {
     auto yae = ::yae::yae<sdl_backend>{};
     auto engine = ::yae::engine{};
-    auto window = create_simple_window();
-    auto camera = create_camera(window);
+    auto window = yae.create_simple_window();
+    auto camera = create_camera(window.get());
 
     buffer_object_builder<float> v({ -3.0f, -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -3.0f, 2.0f });
     auto canvas = std::make_shared<geometry<float>>(v.get_size() / 2, 2);
@@ -105,11 +105,11 @@ void main()
     });
 
     engine.set_resize_callback([&](rendering_context& ctx, SDL_Event event) {
-        int w, h;
-        SDL_GetWindowSize(window, &w, &h);
-        camera = create_camera(window);
+        int w = window->width();
+        int h = window->height();
+        camera = create_camera(window.get());
         glViewport(0, 0, w, h);
     });
 
-    engine.run(window);
+    engine.run(window.get());
 }

@@ -11,25 +11,48 @@ yae::sdl_backend::~sdl_backend()
     SDL_Quit();
 }
 
-struct sdl_window : yae::window {
-    SDL_Window* w;
+struct sdl_window : yae::Wwindow {
+    SDL_Window* win;
     SDL_GLContext ctx;
     sdl_window(SDL_Window* w, SDL_GLContext ctx);
     ~sdl_window();
+    int width();
+    int height();
+    void swap();
 };
 
-sdl_window::sdl_window(SDL_Window* w, SDL_GLContext ctx)
-    : w(w), ctx(ctx)
+sdl_window::sdl_window(SDL_Window* win, SDL_GLContext ctx)
+    : win(win), ctx(ctx)
 {
 }
 
 sdl_window::~sdl_window()
 {
     SDL_GL_DeleteContext(ctx);
-    SDL_DestroyWindow(w); w = nullptr;
+    SDL_DestroyWindow(win);
+    win = nullptr;
 }
 
-std::unique_ptr<sdl_window> create_simple_window()
+int sdl_window::width()
+{
+    int w, h;
+    SDL_GetWindowSize(win, &w, &h);
+    return w;
+}
+
+int sdl_window::height()
+{
+    int w, h;
+    SDL_GetWindowSize(win, &w, &h);
+    return h;
+}
+
+void sdl_window::swap()
+{
+    SDL_GL_SwapWindow(win);
+}
+
+std::unique_ptr<::yae::Wwindow> yae::sdl_backend::create_simple_window()
 {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);

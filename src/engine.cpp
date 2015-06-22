@@ -5,6 +5,7 @@
 #include "timer.hpp"
 #include "context.hpp"
 #include "misc.hpp"
+#include "yae.hpp"
 
 using namespace yae;
 
@@ -14,7 +15,7 @@ struct engine::impl {
     rendering_context ctx;
     std::function<void(rendering_context&)> render_callback;
     std::function<void(rendering_context&, SDL_Event)> resize_callback;
-    void run(SDL_Window* window);
+    void run(Wwindow* win);
 };
 
 engine::engine()
@@ -31,9 +32,9 @@ engine::~engine()
 {
 }
 
-void engine::run(SDL_Window* window)
+void engine::run(Wwindow* win)
 {
-    pimpl->run(window);
+    pimpl->run(win);
 }
 
 void engine::set_render_callback(std::function<void(rendering_context&)> f)
@@ -46,7 +47,7 @@ void engine::set_resize_callback(std::function<void(rendering_context&, SDL_Even
     pimpl->resize_callback = f;
 }
 
-void engine::impl::run(SDL_Window* window)
+void engine::impl::run(Wwindow* win)
 {
     while (true) {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
@@ -70,7 +71,7 @@ void engine::impl::run(SDL_Window* window)
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         render_callback(ctx);
-        SDL_GL_SwapWindow(window);
+        win->swap();
         ctx.frame_count++;
     }
 }   

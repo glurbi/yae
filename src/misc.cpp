@@ -4,21 +4,6 @@
 
 #include "misc.hpp"
 
-SDL_Window* yae::create_simple_window()
-{
-    SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_Window* win = SDL_CreateWindow("GLEW Test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-    SDL_GLContext ctx = SDL_GL_CreateContext(win);
-    glewInit();
-    glViewport(0, 0, 800, 600);
-    return win;
-}
-
 void yae::check_for_opengl_errors()
 {
     switch (glGetError()) {

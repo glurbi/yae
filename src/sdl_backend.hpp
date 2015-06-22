@@ -16,7 +16,7 @@ struct sdl_backend {
     static const int keydown = SDL_KEYDOWN;
     static const int window_resized = SDL_WINDOWEVENT_RESIZED;
 
-    static std::unique_ptr<::yae::window> create_simple_window();
+    std::unique_ptr<::yae::Wwindow> create_simple_window();
 };
 
 }

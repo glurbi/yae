@@ -2,12 +2,12 @@
 #include "yae.hpp"
 #include "sdl_backend.hpp"
 
-std::unique_ptr<yae::camera> create_camera(SDL_Window* window)
+std::unique_ptr<yae::camera> create_camera(yae::Wwindow* win)
 {
     yae::clipping_volume cv;
     int div = 100;
-    int w, h;
-    SDL_GetWindowSize(window, &w, &h);
+    int w = win->width();
+    int h = win->height();
     cv.right = (float)w / div;
     cv.left = (float)-(int)w / div;
     cv.bottom = (float)-(int)h / div;
@@ -21,8 +21,8 @@ void main()
 {
     auto yae = yae::yae<yae::sdl_backend>{};
     auto engine = yae::engine{};
-    auto window = yae::create_simple_window();
-    auto camera = create_camera(window);
+    auto window = yae.create_simple_window();
+    auto camera = create_camera(window.get());
 
     auto rwop = SDL_RWFromFile("smiley.png", "rb");
     auto hero_image = IMG_LoadPNG_RW(rwop);
@@ -51,12 +51,11 @@ void main()
     });
 
     engine.set_resize_callback([&](yae::rendering_context& ctx, SDL_Event event) {
-        int w, h;
-        SDL_GetWindowSize(window, &w, &h);
-        std::cout << "FFOO" << std::endl;
-        camera = create_camera(window);
+        int w = window->width();
+        int h = window->height();
+        camera = create_camera(window.get());
         glViewport(0, 0, w, h);
     });
 
-    engine.run(window);
+    engine.run(window.get());
 }
