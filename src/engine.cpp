@@ -14,8 +14,8 @@ struct engine::impl {
     timer timer_frame;
     rendering_context ctx;
     std::function<void(rendering_context&)> render_callback;
-    std::function<void(rendering_context&, SDL_Event)> resize_callback;
-    void run(Wwindow* win);
+    std::function<void(rendering_context&)> resize_callback;
+    void run(window* win);
 };
 
 engine::engine()
@@ -32,7 +32,7 @@ engine::~engine()
 {
 }
 
-void engine::run(Wwindow* win)
+void engine::run(window* win)
 {
     pimpl->run(win);
 }
@@ -42,12 +42,12 @@ void engine::set_render_callback(std::function<void(rendering_context&)> f)
     pimpl->render_callback = f;
 }
 
-void engine::set_resize_callback(std::function<void(rendering_context&, SDL_Event event)> f)
+void engine::set_resize_callback(std::function<void(rendering_context&)> f)
 {
     pimpl->resize_callback = f;
 }
 
-void engine::impl::run(Wwindow* win)
+void engine::impl::run(window* win)
 {
     while (true) {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
@@ -63,7 +63,7 @@ void engine::impl::run(Wwindow* win)
             case SDL_WINDOWEVENT:
                 switch (event.window.event) {
                 case SDL_WINDOWEVENT_RESIZED:
-                    resize_callback(ctx, event);
+                    resize_callback(ctx);
                     break;
                 }
                 break;

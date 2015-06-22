@@ -11,7 +11,7 @@ yae::sdl_backend::~sdl_backend()
     SDL_Quit();
 }
 
-struct sdl_window : yae::Wwindow {
+struct sdl_window : yae::window {
     SDL_Window* win;
     SDL_GLContext ctx;
     sdl_window(SDL_Window* w, SDL_GLContext ctx);
@@ -52,7 +52,7 @@ void sdl_window::swap()
     SDL_GL_SwapWindow(win);
 }
 
-std::unique_ptr<::yae::Wwindow> yae::sdl_backend::create_simple_window()
+std::unique_ptr<::yae::window> yae::sdl_backend::create_simple_window()
 {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);

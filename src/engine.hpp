@@ -8,15 +8,15 @@
 
 namespace yae {
 
-class Wwindow;
+class window;
 
 struct engine {
     engine();
     engine(engine&& e);
     ~engine();
-    void run(Wwindow* win);
+    void run(window* win);
     void set_render_callback(std::function<void(rendering_context&)> f);
-    void set_resize_callback(std::function<void(rendering_context&, SDL_Event event)> f);
+    void set_resize_callback(std::function<void(rendering_context&)> f);
 private:
     struct impl;
     std::unique_ptr<impl> pimpl;

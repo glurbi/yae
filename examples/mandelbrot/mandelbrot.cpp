@@ -69,7 +69,7 @@ static std::shared_ptr<mandelbrot_program> create_mandelbrot_program()
     return std::shared_ptr<mandelbrot_program>(new mandelbrot_program(attribute_indices));
 }
 
-std::unique_ptr<camera> create_camera(Wwindow* win)
+std::unique_ptr<camera> create_camera(window* win)
 {
     clipping_volume cv;
     int w = win->width();
@@ -104,7 +104,7 @@ void main()
         camera->render(root, ctx, prog);
     });
 
-    engine.set_resize_callback([&](rendering_context& ctx, SDL_Event event) {
+    engine.set_resize_callback([&](rendering_context& ctx) {
         int w = window->width();
         int h = window->height();
         camera = create_camera(window.get());

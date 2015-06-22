@@ -2,7 +2,7 @@
 #include "yae.hpp"
 #include "sdl_backend.hpp"
 
-std::unique_ptr<yae::camera> create_camera(yae::Wwindow* win)
+std::unique_ptr<yae::camera> create_camera(yae::window* win)
 {
     yae::clipping_volume cv;
     int div = 100;
@@ -50,7 +50,7 @@ void main()
         camera->render(root, ctx, texture_program);
     });
 
-    engine.set_resize_callback([&](yae::rendering_context& ctx, SDL_Event event) {
+    engine.set_resize_callback([&](yae::rendering_context& ctx) {
         int w = window->width();
         int h = window->height();
         camera = create_camera(window.get());

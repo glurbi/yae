@@ -21,7 +21,7 @@
 
 namespace yae {
 
-class Wwindow {
+class window {
 public:
     virtual int width() = 0;
     virtual int height() = 0;
@@ -38,7 +38,7 @@ public:
     const int keydown = T::keydown;
     const int window_resized = T::window_resized;
 
-    std::unique_ptr<Wwindow> create_simple_window() { return backend.create_simple_window(); }
+    std::unique_ptr<window> create_simple_window() { return backend.create_simple_window(); }
 private:
     T backend;
 };
