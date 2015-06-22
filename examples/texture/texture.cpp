@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include "yae.hpp"
+#include "sdl_backend.hpp"
 
 std::unique_ptr<yae::camera> create_camera(SDL_Window* window)
 {
@@ -18,7 +19,7 @@ std::unique_ptr<yae::camera> create_camera(SDL_Window* window)
 
 void main()
 {
-    auto yae = yae::yae{};
+    auto yae = yae::yae<yae::sdl_backend>{};
     auto engine = yae::engine{};
     auto window = yae::create_simple_window();
     auto camera = create_camera(window);
