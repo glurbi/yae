@@ -19,6 +19,7 @@ struct sdl_window : yae::window {
     int width();
     int height();
     void swap();
+    std::vector<::yae::event> events();
 };
 
 sdl_window::sdl_window(SDL_Window* win, SDL_GLContext ctx)
@@ -50,6 +51,28 @@ int sdl_window::height()
 void sdl_window::swap()
 {
     SDL_GL_SwapWindow(win);
+}
+
+std::vector<::yae::event> sdl_window::events()
+{
+    std::vector<::yae::event> v;
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+        case SDL_QUIT:
+        case SDL_KEYDOWN:
+            v.push_back(event.type);
+            break;
+        case SDL_WINDOWEVENT:
+            switch (event.window.event) {
+            case SDL_WINDOWEVENT_RESIZED:
+                v.push_back(event.window.event);
+                break;
+            }
+            break;
+        }
+    }
+    return v;
 }
 
 std::unique_ptr<::yae::window> yae::sdl_backend::create_simple_window()

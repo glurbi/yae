@@ -21,26 +21,25 @@
 
 namespace yae {
 
+struct event {
+    event(int v) : value(v) {}
+    int value;
+};
+
 class window {
 public:
     virtual int width() = 0;
     virtual int height() = 0;
     virtual void swap() = 0;
+    virtual std::vector<::yae::event> events() = 0;
 };
 
-template<class T>
-class yae {
-public:
-
+struct yae {
     yae() {}
-
-    const int quit = T::quit;
-    const int keydown = T::keydown;
-    const int window_resized = T::window_resized;
-
-    std::unique_ptr<window> create_simple_window() { return backend.create_simple_window(); }
-private:
-    T backend;
+    virtual std::unique_ptr<window> create_simple_window() = 0;
+    virtual int quit() = 0;
+    virtual int keydown() = 0;
+    virtual int window_resized() = 0;
 };
 
 }

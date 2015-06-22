@@ -7,14 +7,14 @@
 
 namespace yae {
 
-struct sdl_backend {
+struct sdl_backend : ::yae::yae {
 
     sdl_backend();
     ~sdl_backend();
 
-    static const int quit = SDL_QUIT;
-    static const int keydown = SDL_KEYDOWN;
-    static const int window_resized = SDL_WINDOWEVENT_RESIZED;
+    int quit() { return SDL_QUIT; }
+    int keydown() { return SDL_KEYDOWN; }
+    int window_resized() { return SDL_WINDOWEVENT_RESIZED; }
 
     std::unique_ptr<::yae::window> create_simple_window();
 };

@@ -21,7 +21,7 @@ std::unique_ptr<yae::camera> create_camera(yae::window* win)
 
 void main()
 {
-    auto yae = yae::yae<yae::sdl_backend>{};
+    auto yae = yae::sdl_backend{};
     auto engine = yae::engine{};
     auto window = yae.create_simple_window();
     auto camera = create_camera(window.get());
@@ -52,5 +52,5 @@ void main()
         glViewport(0, 0, w, h);
     });
 
-    engine.run(window.get());
+    engine.run(window.get(), yae);
 }
