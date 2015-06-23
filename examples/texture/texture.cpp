@@ -8,7 +8,8 @@ void main()
     auto yae = yae::sdl_backend{};
     auto engine = yae::engine{};
     auto window = yae.create_simple_window();
-    auto camera = window->create_parallel_camera(8.0f, -8.0f, 6.0f, -6.0f, 1.0f, -1.0f);
+    auto cv = yae::clipping_volume { -8.0f, 8.0f, -6.0f, 6.0f, 1.0f, -1.0f };
+    auto camera = window->create_parallel_camera(cv);
 
     auto rwop = SDL_RWFromFile("smiley.png", "rb");
     auto hero_image = IMG_LoadPNG_RW(rwop);
@@ -39,7 +40,7 @@ void main()
     engine.set_resize_callback([&](yae::rendering_context& ctx) {
         int w = window->width();
         int h = window->height();
-        camera = window->create_parallel_camera(8.0f, -8.0f, 6.0f, -6.0f, 1.0f, -1.0f);
+        camera = window->create_parallel_camera(cv);
         glViewport(0, 0, w, h);
     });
 

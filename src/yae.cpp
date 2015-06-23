@@ -630,38 +630,36 @@ void engine::impl::run(window* win, ::yae::yae& yae)
     }
 }
 
-std::unique_ptr<camera> window::create_perspective_camera(
-    float right, float left, float top, float bottom, float nearp, float farp)
+std::unique_ptr<camera> window::create_perspective_camera(const clipping_volume& desired_cv)
 {
-    clipping_volume cv;
+    clipping_volume actual_cv;
     int w = width();
     int h = height();
     float ar = (float)w / h;
-    cv.right = right;
-    cv.left = left;
-    cv.bottom = bottom / ar;
-    cv.top = top / ar;
-    cv.nearp = nearp;
-    cv.farp = farp;
-    std::unique_ptr<camera> camera = std::make_unique<perspective_camera>(cv);
+    actual_cv.right = desired_cv.right;
+    actual_cv.left = desired_cv.left;
+    actual_cv.bottom = desired_cv.bottom / ar;
+    actual_cv.top = desired_cv.top / ar;
+    actual_cv.nearp = desired_cv.nearp;
+    actual_cv.farp = desired_cv.farp;
+    std::unique_ptr<camera> camera = std::make_unique<perspective_camera>(actual_cv);
     camera->move_backward(20.0f);
     return camera;
 }
 
-std::unique_ptr<camera> window::create_parallel_camera(
-    float right, float left, float top, float bottom, float nearp, float farp)
+std::unique_ptr<camera> window::create_parallel_camera(const clipping_volume& desired_cv)
 {
-    clipping_volume cv;
+    clipping_volume actual_cv;
     int w = width();
     int h = height();
     float ar = (float)w / h;
-    cv.right = right;
-    cv.left = left;
-    cv.bottom = bottom / ar;
-    cv.top = top / ar;
-    cv.nearp = nearp;
-    cv.farp = farp;
-    std::unique_ptr<camera> camera = std::make_unique<parallel_camera>(cv);
+    actual_cv.right = desired_cv.right;
+    actual_cv.left = desired_cv.left;
+    actual_cv.bottom = desired_cv.bottom / ar;
+    actual_cv.top = desired_cv.top / ar;
+    actual_cv.nearp = desired_cv.nearp;
+    actual_cv.farp = desired_cv.farp;
+    std::unique_ptr<camera> camera = std::make_unique<parallel_camera>(actual_cv);
     return camera;
 }
 

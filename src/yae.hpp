@@ -246,10 +246,8 @@ public:
     virtual int height() = 0;
     virtual void swap() = 0;
     virtual std::vector<::yae::event> events() = 0;
-    virtual std::unique_ptr<::yae::camera> create_perspective_camera(
-        float right, float left, float top, float bottom, float nearp, float farp);
-    virtual std::unique_ptr<::yae::camera> create_parallel_camera(
-        float right, float left, float top, float bottom, float nearp, float farp);
+    virtual std::unique_ptr<::yae::camera> create_perspective_camera(const clipping_volume& cv);
+    virtual std::unique_ptr<::yae::camera> create_parallel_camera(const clipping_volume& cv);
 };
 
 struct yae {

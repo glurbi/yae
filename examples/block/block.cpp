@@ -8,7 +8,8 @@ void main()
     auto yae = yae::sdl_backend{};
     auto engine = yae::engine{};
     auto window = yae.create_simple_window();
-    auto camera = window->create_perspective_camera(2.0f, -2.0f, 2.0f, -2.0f, 2.0f, 100.0f);
+    auto cv = yae::clipping_volume { -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 100.0f };
+    auto camera = window->create_perspective_camera(cv);
 
     auto box = yae::make_box<float>(10,20,5);
     auto node = std::make_shared<yae::geometry_node<float>>(std::move(box));
@@ -32,7 +33,7 @@ void main()
     engine.set_resize_callback([&](yae::rendering_context& ctx) {
         int w = window->width();
         int h = window->height();
-        camera = window->create_perspective_camera(2.0f, -2.0f, 2.0f, -2.0f, 2.0f, 100.0f);
+        camera = window->create_perspective_camera(cv);
         glViewport(0, 0, w, h);
     });
 

@@ -74,7 +74,8 @@ void main()
     auto yae = ::yae::sdl_backend{};
     auto engine = ::yae::engine{};
     auto window = yae.create_simple_window();
-    auto camera = window->create_parallel_camera(1.5f, -2.5f, 1.5f, -1.5f, -1.0f, 1.0f);
+    auto cv = clipping_volume{ -2.5f, 1.5f, -1.5f, 1.5f, -1.0f, 1.0f };
+    auto camera = window->create_parallel_camera(cv);
 
     buffer_object_builder<float> v({ -3.0f, -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -3.0f, 2.0f });
     auto canvas = std::make_shared<geometry<float>>(v.get_size() / 2, 2);
@@ -91,7 +92,7 @@ void main()
     engine.set_resize_callback([&](rendering_context& ctx) {
         int w = window->width();
         int h = window->height();
-        camera = window->create_parallel_camera(1.5f, -2.5f, 1.5f, -1.5f, -1.0f, 1.0f);
+        camera = window->create_parallel_camera(cv);
         glViewport(0, 0, w, h);
     });
 
