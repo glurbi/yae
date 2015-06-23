@@ -1,8 +1,12 @@
 #ifndef _sdl_backend_hpp_
 #define _sdl_backend_hpp_
 
-#include <SDL.h>
 #include <memory>
+
+#define SDL_MAIN_HANDLED // otherwise SDL redefines main()
+#include <SDL.h>
+#include <SDL_image.h>
+
 #include "yae.hpp"
 
 namespace yae {

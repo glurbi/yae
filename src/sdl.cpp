@@ -1,5 +1,5 @@
 
-#include "sdl_backend.hpp"
+#include "sdl.hpp"
 
 yae::sdl_backend::sdl_backend()
 {
@@ -90,3 +90,4 @@ std::unique_ptr<::yae::window> yae::sdl_backend::create_simple_window()
     glViewport(0, 0, 800, 600);
     return std::make_unique<sdl_window>(win, ctx);
 }
+

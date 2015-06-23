@@ -1,5 +1,0 @@
-#include "sdl_backend.hpp"
-
-yae::sdl_backend::sdl_backend()
-{
-}

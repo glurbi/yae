@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include "yae.hpp"
-#include "sdl_backend.hpp"
+#include "sdl.hpp"
 
 using namespace yae;
 
