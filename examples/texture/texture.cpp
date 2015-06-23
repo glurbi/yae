@@ -3,27 +3,12 @@
 #include "yae.hpp"
 #include "sdl.hpp"
 
-std::unique_ptr<yae::camera> create_camera(yae::window* win)
-{
-    yae::clipping_volume cv;
-    int div = 100;
-    int w = win->width();
-    int h = win->height();
-    cv.right = (float)w / div;
-    cv.left = (float)-(int)w / div;
-    cv.bottom = (float)-(int)h / div;
-    cv.top = (float)h / div;
-    cv.nearp = 1.0f;
-    cv.farp = -1.0f;
-    return std::make_unique<yae::parallel_camera>(cv);
-}
-
 void main()
 {
     auto yae = yae::sdl_backend{};
     auto engine = yae::engine{};
     auto window = yae.create_simple_window();
-    auto camera = create_camera(window.get());
+    auto camera = window->create_parallel_camera(8.0f, -8.0f, 6.0f, -6.0f, 1.0f, -1.0f);
 
     auto rwop = SDL_RWFromFile("smiley.png", "rb");
     auto hero_image = IMG_LoadPNG_RW(rwop);
@@ -54,7 +39,7 @@ void main()
     engine.set_resize_callback([&](yae::rendering_context& ctx) {
         int w = window->width();
         int h = window->height();
-        camera = create_camera(window.get());
+        camera = window->create_parallel_camera(8.0f, -8.0f, 6.0f, -6.0f, 1.0f, -1.0f);
         glViewport(0, 0, w, h);
     });
 

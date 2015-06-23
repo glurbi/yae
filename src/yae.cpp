@@ -629,3 +629,39 @@ void engine::impl::run(window* win, ::yae::yae& yae)
         ctx.frame_count++;
     }
 }
+
+std::unique_ptr<camera> window::create_perspective_camera(
+    float right, float left, float top, float bottom, float nearp, float farp)
+{
+    clipping_volume cv;
+    int w = width();
+    int h = height();
+    float ar = (float)w / h;
+    cv.right = right;
+    cv.left = left;
+    cv.bottom = bottom / ar;
+    cv.top = top / ar;
+    cv.nearp = nearp;
+    cv.farp = farp;
+    std::unique_ptr<camera> camera = std::make_unique<perspective_camera>(cv);
+    camera->move_backward(20.0f);
+    return camera;
+}
+
+std::unique_ptr<camera> window::create_parallel_camera(
+    float right, float left, float top, float bottom, float nearp, float farp)
+{
+    clipping_volume cv;
+    int w = width();
+    int h = height();
+    float ar = (float)w / h;
+    cv.right = right;
+    cv.left = left;
+    cv.bottom = bottom / ar;
+    cv.top = top / ar;
+    cv.nearp = nearp;
+    cv.farp = farp;
+    std::unique_ptr<camera> camera = std::make_unique<parallel_camera>(cv);
+    return camera;
+}
+

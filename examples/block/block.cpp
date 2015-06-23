@@ -3,29 +3,12 @@
 #include "yae.hpp"
 #include "sdl.hpp"
 
-std::unique_ptr<yae::camera> create_camera(yae::window* win)
-{
-    yae::clipping_volume cv;
-    int w = win->width();
-    int h = win->height();
-    float ar = (float)w / h;
-    cv.right = 2.0f;
-    cv.left = -2.0f;
-    cv.bottom = -2.0f / ar;
-    cv.top = 2.0f / ar;
-    cv.nearp = 2.0f;
-    cv.farp = 100.0f;
-    std::unique_ptr<yae::camera> camera = std::make_unique<yae::perspective_camera>(cv);
-    camera->move_backward(20.0f);
-    return camera;
-}
-
 void main()
 {
     auto yae = yae::sdl_backend{};
     auto engine = yae::engine{};
     auto window = yae.create_simple_window();
-    auto camera = create_camera(window.get());
+    auto camera = window->create_perspective_camera(2.0f, -2.0f, 2.0f, -2.0f, 2.0f, 100.0f);
 
     auto box = yae::make_box<float>(10,20,5);
     auto node = std::make_shared<yae::geometry_node<float>>(std::move(box));
@@ -49,7 +32,7 @@ void main()
     engine.set_resize_callback([&](yae::rendering_context& ctx) {
         int w = window->width();
         int h = window->height();
-        camera = create_camera(window.get());
+        camera = window->create_perspective_camera(2.0f, -2.0f, 2.0f, -2.0f, 2.0f, 100.0f);
         glViewport(0, 0, w, h);
     });
 
