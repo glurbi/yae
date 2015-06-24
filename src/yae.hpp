@@ -219,22 +219,6 @@ private:
     std::shared_ptr<geometry<T>> geom;
 };
 
-
-class window;
-struct yae;
-
-struct engine {
-    engine();
-    engine(engine&& e);
-    ~engine();
-    void run(window* win, ::yae::yae& yae);
-    void set_render_callback(std::function<void(rendering_context&)> f);
-    void set_resize_callback(std::function<void(rendering_context&)> f);
-private:
-    struct impl;
-    std::unique_ptr<impl> pimpl;
-};
-
 struct event {
     event(int v) : value(v) {}
     int value;
@@ -245,17 +229,25 @@ public:
     virtual int width() = 0;
     virtual int height() = 0;
     virtual void swap() = 0;
-    virtual std::vector<::yae::event> events() = 0;
-    virtual std::unique_ptr<::yae::camera> create_perspective_camera(const clipping_volume& cv);
-    virtual std::unique_ptr<::yae::camera> create_parallel_camera(const clipping_volume& cv);
+    virtual std::vector<event> events() = 0;
+    virtual std::unique_ptr<camera> create_perspective_camera(const clipping_volume& cv);
+    virtual std::unique_ptr<camera> create_parallel_camera(const clipping_volume& cv);
 };
 
-struct yae {
-    yae() {}
+struct engine {
+    engine();
+    engine(engine&& e);
+    ~engine();
+    void run(window* win);
+    void set_render_callback(std::function<void(rendering_context&)> f);
+    void set_resize_callback(std::function<void(rendering_context&)> f);
     virtual std::unique_ptr<window> create_simple_window() = 0;
     virtual int quit() = 0;
     virtual int keydown() = 0;
     virtual int window_resized() = 0;
+private:
+    struct impl;
+    std::unique_ptr<impl> pimpl;
 };
 
 }

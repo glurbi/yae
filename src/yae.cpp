@@ -575,7 +575,7 @@ struct engine::impl {
     rendering_context ctx;
     std::function<void(rendering_context&)> render_callback;
     std::function<void(rendering_context&)> resize_callback;
-    void run(window* win, ::yae::yae& yae);
+    void run(window* win, engine* eng);
 };
 
 engine::engine()
@@ -592,9 +592,9 @@ engine::~engine()
 {
 }
 
-void engine::run(window* win, ::yae::yae& yae)
+void engine::run(window* win)
 {
-    pimpl->run(win, yae);
+    pimpl->run(win, this);
 }
 
 void engine::set_render_callback(std::function<void(rendering_context&)> f)
@@ -607,7 +607,7 @@ void engine::set_resize_callback(std::function<void(rendering_context&)> f)
     pimpl->resize_callback = f;
 }
 
-void engine::impl::run(window* win, ::yae::yae& yae)
+void engine::impl::run(window* win, engine* eng)
 {
     while (true) {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
@@ -616,10 +616,10 @@ void engine::impl::run(window* win, ::yae::yae& yae)
         check_for_opengl_errors();
         std::vector<::yae::event> events = win->events();
         for (::yae::event e : events) {
-            if (e.value == yae.quit() || e.value == yae.keydown()) {
+            if (e.value == eng->quit() || e.value == eng->keydown()) {
                 return;
             }
-            else if (e.value == yae.window_resized()) {
+            else if (e.value == eng->window_resized()) {
                 resize_callback(ctx);
             }
         }

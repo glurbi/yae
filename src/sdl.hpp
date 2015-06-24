@@ -1,5 +1,5 @@
-#ifndef _sdl_backend_hpp_
-#define _sdl_backend_hpp_
+#ifndef _sdl_hpp_
+#define _sdl_hpp_
 
 #include <memory>
 
@@ -11,16 +11,16 @@
 
 namespace yae {
 
-struct sdl_backend : ::yae::yae {
+struct sdl_engine : yae::engine {
 
-    sdl_backend();
-    ~sdl_backend();
+    sdl_engine();
+    ~sdl_engine();
 
     int quit() { return SDL_QUIT; }
     int keydown() { return SDL_KEYDOWN; }
     int window_resized() { return SDL_WINDOWEVENT_RESIZED; }
 
-    std::unique_ptr<::yae::window> create_simple_window();
+    std::unique_ptr<window> create_simple_window();
 };
 
 }

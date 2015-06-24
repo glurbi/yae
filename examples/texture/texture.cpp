@@ -5,10 +5,9 @@
 
 void main()
 {
-    auto yae = yae::sdl_backend{};
-    auto engine = yae::engine{};
-    auto window = yae.create_simple_window();
-    auto cv = yae::clipping_volume { -8.0f, 8.0f, -6.0f, 6.0f, 1.0f, -1.0f };
+    auto engine = std::make_unique<yae::sdl_engine>();
+    auto window = engine->create_simple_window();
+    auto cv = yae::clipping_volume{ -8.0f, 8.0f, -6.0f, 6.0f, 1.0f, -1.0f };
     auto camera = window->create_parallel_camera(cv);
 
     auto rwop = SDL_RWFromFile("smiley.png", "rb");
@@ -30,19 +29,19 @@ void main()
     auto texture_program = yae::texture_program::create();
     texture_program->set_texture(hero_texture);
 
-    engine.set_render_callback([&](yae::rendering_context& ctx) {
+    engine->set_render_callback([&](yae::rendering_context& ctx) {
         camera->rotate_z(0.5);
         auto f = (float)(1.0+0.5*sin(0.1*2.0*3.1415927*ctx.elapsed_time_seconds));
         camera->set_opening(cam_width * f, cam_height * f);
         camera->render(root, ctx, texture_program);
     });
 
-    engine.set_resize_callback([&](yae::rendering_context& ctx) {
+    engine->set_resize_callback([&](yae::rendering_context& ctx) {
         int w = window->width();
         int h = window->height();
         camera = window->create_parallel_camera(cv);
         glViewport(0, 0, w, h);
     });
 
-    engine.run(window.get(), yae);
+    engine->run(window.get());
 }

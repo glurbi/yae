@@ -1,26 +1,25 @@
 #include <GL/glew.h>
+
 #include "yae.hpp"
 #include "sdl.hpp"
 
-using namespace yae;
-
-class mandelbrot_program : public shader_program {
+class mandelbrot_program : public yae::shader_program {
 public:
     mandelbrot_program(const std::map<int, std::string>& attribute_indices);
-    virtual void render(const geometry<float>& geometry, rendering_context& ctx);
+    virtual void render(const yae::geometry<float>& geometry, yae::rendering_context& ctx);
 };
 
-void mandelbrot_program::render(const geometry<float>& geometry, rendering_context& ctx)
+void mandelbrot_program::render(const yae::geometry<float>& geometry, yae::rendering_context& ctx)
 {
     glPolygonMode(polygon_face, polygon_mode);
     glUseProgram(id);
     GLuint matrix_uniform = glGetUniformLocation(id, "mvp");
     glUniformMatrix4fv(matrix_uniform, 1, false, ctx.mvp().m);
-    glEnableVertexAttribArray(vertex_attribute::POSITION);
+    glEnableVertexAttribArray(yae::vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.get_positions_id());
-    glVertexAttribPointer(vertex_attribute::POSITION, geometry.get_dimensions(), GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(yae::vertex_attribute::POSITION, geometry.get_dimensions(), GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, geometry.get_count());
-    glDisableVertexAttribArray(vertex_attribute::POSITION);
+    glDisableVertexAttribArray(yae::vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glUseProgram(0);
 }
@@ -65,36 +64,35 @@ mandelbrot_program::mandelbrot_program(const std::map<int, std::string>& attribu
 static std::shared_ptr<mandelbrot_program> create_mandelbrot_program()
 {
     std::map<int, std::string> attribute_indices;
-    attribute_indices[vertex_attribute::POSITION] = "pos";
+    attribute_indices[yae::vertex_attribute::POSITION] = "pos";
     return std::shared_ptr<mandelbrot_program>(new mandelbrot_program(attribute_indices));
 }
 
 void main()
 {
-    auto yae = ::yae::sdl_backend{};
-    auto engine = ::yae::engine{};
-    auto window = yae.create_simple_window();
-    auto cv = clipping_volume{ -2.5f, 1.5f, -1.5f, 1.5f, -1.0f, 1.0f };
+    auto engine = std::make_unique<yae::sdl_engine>();
+    auto window = engine->create_simple_window();
+    auto cv = yae::clipping_volume{ -2.5f, 1.5f, -1.5f, 1.5f, -1.0f, 1.0f };
     auto camera = window->create_parallel_camera(cv);
 
-    buffer_object_builder<float> v({ -3.0f, -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -3.0f, 2.0f });
-    auto canvas = std::make_shared<geometry<float>>(v.get_size() / 2, 2);
+    yae::buffer_object_builder<float> v({ -3.0f, -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -3.0f, 2.0f });
+    auto canvas = std::make_shared<yae::geometry<float>>(v.get_size() / 2, 2);
     canvas->set_vertex_positions(v.build());
-    auto node = std::make_shared<geometry_node<float>>(std::move(canvas));
-    auto root = std::make_shared<group>();
+    auto node = std::make_shared<yae::geometry_node<float>>(std::move(canvas));
+    auto root = std::make_shared<yae::group>();
     root->add(node);
     std::shared_ptr<mandelbrot_program> prog = create_mandelbrot_program();
 
-    engine.set_render_callback([&](rendering_context& ctx) {
+    engine->set_render_callback([&](yae::rendering_context& ctx) {
         camera->render(root, ctx, prog);
     });
 
-    engine.set_resize_callback([&](rendering_context& ctx) {
+    engine->set_resize_callback([&](yae::rendering_context& ctx) {
         int w = window->width();
         int h = window->height();
         camera = window->create_parallel_camera(cv);
         glViewport(0, 0, w, h);
     });
 
-    engine.run(window.get(), yae);
+    engine->run(window.get());
 }

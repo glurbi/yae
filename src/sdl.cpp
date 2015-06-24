@@ -1,12 +1,12 @@
 
 #include "sdl.hpp"
 
-yae::sdl_backend::sdl_backend()
+yae::sdl_engine::sdl_engine()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
 }
 
-yae::sdl_backend::~sdl_backend()
+yae::sdl_engine::~sdl_engine()
 {
     SDL_Quit();
 }
@@ -75,7 +75,7 @@ std::vector<::yae::event> sdl_window::events()
     return v;
 }
 
-std::unique_ptr<::yae::window> yae::sdl_backend::create_simple_window()
+std::unique_ptr<::yae::window> yae::sdl_engine::create_simple_window()
 {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
