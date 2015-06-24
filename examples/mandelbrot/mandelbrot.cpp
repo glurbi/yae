@@ -83,7 +83,7 @@ void main()
     root->add(node);
     std::shared_ptr<mandelbrot_program> prog = create_mandelbrot_program();
 
-    engine->set_render_callback([&](yae::rendering_context& ctx) {
+    window->set_render_callback([&](yae::rendering_context& ctx) {
         camera->render(root, ctx, prog);
     });
 

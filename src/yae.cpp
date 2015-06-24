@@ -76,6 +76,7 @@ rendering_context::rendering_context()
     memset(last_frame_times_seconds, 0, 100);
     elapsed_time_seconds = 0.0;
     frame_count = 0;
+    exit = false;
     reset();
 }
 
@@ -574,6 +575,11 @@ void window::set_resize_callback(std::function<void(rendering_context&)> f)
     resize_callback = f;
 }
 
+void window::set_render_callback(std::function<void(rendering_context&)> f)
+{
+    render_callback = f;
+}
+
 std::unique_ptr<camera> window::create_perspective_camera(const clipping_volume& desired_cv)
 {
     clipping_volume actual_cv;
@@ -607,31 +613,32 @@ std::unique_ptr<camera> window::create_parallel_camera(const clipping_volume& de
     return camera;
 }
 
+void window::render(rendering_context& ctx)
+{
+    make_current();
+    for (event e : events()) {
+        if (e.value == quit() || e.value == keydown()) {
+            ctx.exit = true;
+            return;
+        }
+        else if (e.value == window_resized()) {
+            resize_callback(ctx);
+        }
+    }
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    render_callback(ctx);
+    swap();
+}
+
 void engine::run(window* win)
 {
-    while (true) {
+    while (!ctx.exit) {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
         ctx.last_frame_times_seconds[ctx.frame_count % 100] = timer_frame.elapsed();
         timer_frame.reset();
+        win->render(ctx);
         check_for_opengl_errors();
-        std::vector<event> events = win->events();
-        for (event e : events) {
-            if (e.value == quit() || e.value == keydown()) {
-                return;
-            }
-            else if (e.value == window_resized()) {
-                win->resize_callback(ctx);
-            }
-        }
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        render_callback(ctx);
-        win->swap();
         ctx.frame_count++;
     }
-}
-
-void engine::set_render_callback(std::function<void(rendering_context&)> f)
-{
-    render_callback = f;
 }
 

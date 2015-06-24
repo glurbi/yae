@@ -23,7 +23,7 @@ void main()
     prog->set_solid_color(yae::color4f(0.5f, 0.5f, 0.5f));
     prog->set_wire_color(yae::color4f(1.0f, 1.0f, 1.0f));
 
-    engine->set_render_callback([&](yae::rendering_context& ctx) {
+    window->set_render_callback([&](yae::rendering_context& ctx) {
         camera->render(root, ctx, prog);
     });
 

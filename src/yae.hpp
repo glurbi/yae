@@ -137,6 +137,7 @@ public:
     double last_frame_times_seconds[100];
     long frame_count;
     std::shared_ptr<program> prog;
+    bool exit;
 private:
     std::vector<matrix44f> mvp_stack;
     std::vector<matrix44f> mv_stack;
@@ -225,25 +226,28 @@ struct window {
     virtual int width() = 0;
     virtual int height() = 0;
     virtual void swap() = 0;
+    virtual void make_current() = 0;
     virtual std::vector<event> events() = 0;
+    virtual int quit() = 0;
+    virtual int keydown() = 0;
+    virtual int window_resized() = 0;
     virtual std::unique_ptr<camera> create_perspective_camera(const clipping_volume& cv);
     virtual std::unique_ptr<camera> create_parallel_camera(const clipping_volume& cv);
     void set_resize_callback(std::function<void(rendering_context&)> f);
+    void set_render_callback(std::function<void(rendering_context&)> f);
+    void render(rendering_context& ctx);
+private:
     std::function<void(rendering_context&)> resize_callback;
+    std::function<void(rendering_context&)> render_callback;
 };
 
 struct engine {
     void run(window* win);
-    void set_render_callback(std::function<void(rendering_context&)> f);
     virtual std::unique_ptr<window> create_simple_window() = 0;
-    virtual int quit() = 0;
-    virtual int keydown() = 0;
-    virtual int window_resized() = 0;
 private:
     timer timer_absolute;
     timer timer_frame;
     rendering_context ctx;
-    std::function<void(rendering_context&)> render_callback;
 };
 
 }

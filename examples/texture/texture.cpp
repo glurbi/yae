@@ -27,7 +27,7 @@ void main()
     auto texture_program = yae::texture_program::create();
     texture_program->set_texture(hero_texture);
 
-    engine->set_render_callback([&](yae::rendering_context& ctx) {
+    window->set_render_callback([&](yae::rendering_context& ctx) {
         camera->rotate_z(0.5);
         auto f = (float)(1.0+0.5*sin(0.1*2.0*3.1415927*ctx.elapsed_time_seconds));
         camera->set_opening(cam_width * f, cam_height * f);

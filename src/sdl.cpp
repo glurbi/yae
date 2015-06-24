@@ -1,17 +1,18 @@
-
 #include "sdl.hpp"
 
-yae::sdl_engine::sdl_engine()
+using namespace yae;
+
+sdl_engine::sdl_engine()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
 }
 
-yae::sdl_engine::~sdl_engine()
+sdl_engine::~sdl_engine()
 {
     SDL_Quit();
 }
 
-struct sdl_window : yae::window {
+struct sdl_window : window {
     SDL_Window* win;
     SDL_GLContext ctx;
     sdl_window(SDL_Window* w, SDL_GLContext ctx);
@@ -19,7 +20,11 @@ struct sdl_window : yae::window {
     int width();
     int height();
     void swap();
-    std::vector<::yae::event> events();
+    std::vector<::event> events();
+    int quit() { return SDL_QUIT; }
+    int keydown() { return SDL_KEYDOWN; }
+    int window_resized() { return SDL_WINDOWEVENT_RESIZED; }
+    void make_current();
 };
 
 sdl_window::sdl_window(SDL_Window* win, SDL_GLContext ctx)
@@ -53,20 +58,20 @@ void sdl_window::swap()
     SDL_GL_SwapWindow(win);
 }
 
-std::vector<::yae::event> sdl_window::events()
+std::vector<event> sdl_window::events()
 {
-    std::vector<::yae::event> v;
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
+    std::vector<event> v;
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        switch (e.type) {
         case SDL_QUIT:
         case SDL_KEYDOWN:
-            v.push_back(event.type);
+            v.push_back(e.type);
             break;
         case SDL_WINDOWEVENT:
-            switch (event.window.event) {
+            switch (e.window.event) {
             case SDL_WINDOWEVENT_RESIZED:
-                v.push_back(event.window.event);
+                v.push_back(e.window.event);
                 break;
             }
             break;
@@ -75,7 +80,12 @@ std::vector<::yae::event> sdl_window::events()
     return v;
 }
 
-std::unique_ptr<::yae::window> yae::sdl_engine::create_simple_window()
+void sdl_window::make_current()
+{
+    SDL_GL_MakeCurrent(win, ctx);
+}
+
+std::unique_ptr<window> sdl_engine::create_simple_window()
 {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
