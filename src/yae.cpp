@@ -569,64 +569,9 @@ void wireframe_program::render(const geometry<float>& geometry, rendering_contex
     prog->render(geometry, ctx);
 }
 
-struct engine::impl {
-    timer timer_absolute;
-    timer timer_frame;
-    rendering_context ctx;
-    std::function<void(rendering_context&)> render_callback;
-    void run(window* win, engine* eng);
-};
-
-engine::engine()
-: pimpl(std::make_unique<impl>())
-{
-}
-
-engine::engine(engine&& e)
-{
-    pimpl = std::move(e.pimpl);
-}
-
-engine::~engine()
-{
-}
-
-void engine::run(window* win)
-{
-    pimpl->run(win, this);
-}
-
-void engine::set_render_callback(std::function<void(rendering_context&)> f)
-{
-    pimpl->render_callback = f;
-}
-
 void window::set_resize_callback(std::function<void(rendering_context&)> f)
 {
     resize_callback = f;
-}
-
-void engine::impl::run(window* win, engine* eng)
-{
-    while (true) {
-        ctx.elapsed_time_seconds = timer_absolute.elapsed();
-        ctx.last_frame_times_seconds[ctx.frame_count % 100] = timer_frame.elapsed();
-        timer_frame.reset();
-        check_for_opengl_errors();
-        std::vector<event> events = win->events();
-        for (event e : events) {
-            if (e.value == eng->quit() || e.value == eng->keydown()) {
-                return;
-            }
-            else if (e.value == eng->window_resized()) {
-                win->resize_callback(ctx);
-            }
-        }
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        render_callback(ctx);
-        win->swap();
-        ctx.frame_count++;
-    }
 }
 
 std::unique_ptr<camera> window::create_perspective_camera(const clipping_volume& desired_cv)
@@ -660,5 +605,33 @@ std::unique_ptr<camera> window::create_parallel_camera(const clipping_volume& de
     actual_cv.farp = desired_cv.farp;
     std::unique_ptr<camera> camera = std::make_unique<parallel_camera>(actual_cv);
     return camera;
+}
+
+void engine::run(window* win)
+{
+    while (true) {
+        ctx.elapsed_time_seconds = timer_absolute.elapsed();
+        ctx.last_frame_times_seconds[ctx.frame_count % 100] = timer_frame.elapsed();
+        timer_frame.reset();
+        check_for_opengl_errors();
+        std::vector<event> events = win->events();
+        for (event e : events) {
+            if (e.value == quit() || e.value == keydown()) {
+                return;
+            }
+            else if (e.value == window_resized()) {
+                win->resize_callback(ctx);
+            }
+        }
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        render_callback(ctx);
+        win->swap();
+        ctx.frame_count++;
+    }
+}
+
+void engine::set_render_callback(std::function<void(rendering_context&)> f)
+{
+    render_callback = f;
 }
 

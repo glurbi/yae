@@ -233,9 +233,6 @@ struct window {
 };
 
 struct engine {
-    engine();
-    engine(engine&& e);
-    ~engine();
     void run(window* win);
     void set_render_callback(std::function<void(rendering_context&)> f);
     virtual std::unique_ptr<window> create_simple_window() = 0;
@@ -243,8 +240,10 @@ struct engine {
     virtual int keydown() = 0;
     virtual int window_resized() = 0;
 private:
-    struct impl;
-    std::unique_ptr<impl> pimpl;
+    timer timer_absolute;
+    timer timer_frame;
+    rendering_context ctx;
+    std::function<void(rendering_context&)> render_callback;
 };
 
 }
