@@ -59,7 +59,7 @@ GLuint texture::get_id() const
     return id;
 }
 
-void ::yae::check_for_opengl_errors()
+void yae::check_for_opengl_errors()
 {
     switch (glGetError()) {
     case GL_INVALID_ENUM: std::cout << "GLenum argument out of range" << std::endl; break;
@@ -574,7 +574,6 @@ struct engine::impl {
     timer timer_frame;
     rendering_context ctx;
     std::function<void(rendering_context&)> render_callback;
-    std::function<void(rendering_context&)> resize_callback;
     void run(window* win, engine* eng);
 };
 
@@ -602,9 +601,9 @@ void engine::set_render_callback(std::function<void(rendering_context&)> f)
     pimpl->render_callback = f;
 }
 
-void engine::set_resize_callback(std::function<void(rendering_context&)> f)
+void window::set_resize_callback(std::function<void(rendering_context&)> f)
 {
-    pimpl->resize_callback = f;
+    resize_callback = f;
 }
 
 void engine::impl::run(window* win, engine* eng)
@@ -614,13 +613,13 @@ void engine::impl::run(window* win, engine* eng)
         ctx.last_frame_times_seconds[ctx.frame_count % 100] = timer_frame.elapsed();
         timer_frame.reset();
         check_for_opengl_errors();
-        std::vector<::yae::event> events = win->events();
-        for (::yae::event e : events) {
+        std::vector<event> events = win->events();
+        for (event e : events) {
             if (e.value == eng->quit() || e.value == eng->keydown()) {
                 return;
             }
             else if (e.value == eng->window_resized()) {
-                resize_callback(ctx);
+                win->resize_callback(ctx);
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

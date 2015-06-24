@@ -1,5 +1,3 @@
-#include <GL/glew.h>
-
 #include "yae.hpp"
 #include "sdl.hpp"
 
@@ -29,7 +27,7 @@ void main()
         camera->render(root, ctx, prog);
     });
 
-    engine->set_resize_callback([&](yae::rendering_context& ctx) {
+    window->set_resize_callback([&](yae::rendering_context& ctx) {
         int w = window->width();
         int h = window->height();
         camera = window->create_perspective_camera(cv);

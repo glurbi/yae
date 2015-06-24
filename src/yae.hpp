@@ -12,7 +12,6 @@
 #include "matrix.hpp"
 #include "geometry.hpp"
 
-
 namespace yae {
 
 void check_for_opengl_errors();
@@ -124,8 +123,6 @@ private:
     std::shared_ptr<monochrome_program> prog;
 };
 
-
-
 class rendering_context {
 public:
     rendering_context();
@@ -224,14 +221,15 @@ struct event {
     int value;
 };
 
-class window {
-public:
+struct window {
     virtual int width() = 0;
     virtual int height() = 0;
     virtual void swap() = 0;
     virtual std::vector<event> events() = 0;
     virtual std::unique_ptr<camera> create_perspective_camera(const clipping_volume& cv);
     virtual std::unique_ptr<camera> create_parallel_camera(const clipping_volume& cv);
+    void set_resize_callback(std::function<void(rendering_context&)> f);
+    std::function<void(rendering_context&)> resize_callback;
 };
 
 struct engine {
@@ -240,7 +238,6 @@ struct engine {
     ~engine();
     void run(window* win);
     void set_render_callback(std::function<void(rendering_context&)> f);
-    void set_resize_callback(std::function<void(rendering_context&)> f);
     virtual std::unique_ptr<window> create_simple_window() = 0;
     virtual int quit() = 0;
     virtual int keydown() = 0;
