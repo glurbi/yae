@@ -1,4 +1,5 @@
 #include "yae.hpp"
+#include "shader.hpp"
 #include "sdl.hpp"
 
 void main()

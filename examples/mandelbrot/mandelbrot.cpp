@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 
 #include "yae.hpp"
+#include "shader.hpp"
 #include "sdl.hpp"
 
 class mandelbrot_program : public yae::shader_program {
