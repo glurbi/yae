@@ -34,5 +34,7 @@ void main()
         glViewport(0, 0, w, h);
     });
 
+    window->close_when_keydown();
+
     engine->run(window.get());
 }

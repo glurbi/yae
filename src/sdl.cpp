@@ -35,7 +35,9 @@ sdl_window::sdl_window(SDL_Window* win, SDL_GLContext ctx)
 sdl_window::~sdl_window()
 {
     SDL_GL_DeleteContext(ctx);
-    SDL_DestroyWindow(win);
+    if (win != nullptr) {
+        SDL_DestroyWindow(win);
+    }
     win = nullptr;
 }
 

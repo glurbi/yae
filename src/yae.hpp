@@ -223,6 +223,7 @@ struct event {
 };
 
 struct window {
+    window();
     virtual int width() = 0;
     virtual int height() = 0;
     virtual void swap() = 0;
@@ -233,12 +234,15 @@ struct window {
     virtual int window_resized() = 0;
     virtual std::unique_ptr<camera> create_perspective_camera(const clipping_volume& cv);
     virtual std::unique_ptr<camera> create_parallel_camera(const clipping_volume& cv);
+    void close_when_keydown();
     void set_resize_callback(std::function<void(rendering_context&)> f);
     void set_render_callback(std::function<void(rendering_context&)> f);
+    void set_key_event_callback(std::function<void(rendering_context&, event&)> f);
     void render(rendering_context& ctx);
 private:
     std::function<void(rendering_context&)> resize_callback;
     std::function<void(rendering_context&)> render_callback;
+    std::function<void(rendering_context&, event&)> key_event_callback;
 };
 
 struct engine {

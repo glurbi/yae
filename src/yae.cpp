@@ -570,6 +570,11 @@ void wireframe_program::render(const geometry<float>& geometry, rendering_contex
     prog->render(geometry, ctx);
 }
 
+window::window()
+{
+    set_key_event_callback([&](yae::rendering_context& ctx, yae::event evt) {});
+}
+
 void window::set_resize_callback(std::function<void(rendering_context&)> f)
 {
     resize_callback = f;
@@ -578,6 +583,11 @@ void window::set_resize_callback(std::function<void(rendering_context&)> f)
 void window::set_render_callback(std::function<void(rendering_context&)> f)
 {
     render_callback = f;
+}
+
+void window::set_key_event_callback(std::function<void(rendering_context&, event&)> f)
+{
+    key_event_callback = f;
 }
 
 std::unique_ptr<camera> window::create_perspective_camera(const clipping_volume& desired_cv)
@@ -613,15 +623,25 @@ std::unique_ptr<camera> window::create_parallel_camera(const clipping_volume& de
     return camera;
 }
 
+void window::close_when_keydown()
+{
+    set_key_event_callback([&](yae::rendering_context& ctx, yae::event evt) {
+        if (evt.value == keydown()) {
+            ctx.exit = true;
+        }
+    });
+}
+
 void window::render(rendering_context& ctx)
 {
     make_current();
     for (event e : events()) {
-        if (e.value == quit() || e.value == keydown()) {
+        if (e.value == quit()) {
             ctx.exit = true;
             return;
-        }
-        else if (e.value == window_resized()) {
+        } else if (e.value == keydown()) {
+            key_event_callback(ctx, e);
+        } else if (e.value == window_resized()) {
             resize_callback(ctx);
         }
     }
