@@ -265,6 +265,13 @@ void group::render(rendering_context& ctx)
 window::window()
 {
     set_key_event_callback([&](yae::rendering_context& ctx, yae::event evt) {});
+    _desired_clipping_volume = clipping_volume{ -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f };
+    _camera = std::make_unique<perspective_camera>(_desired_clipping_volume);
+}
+
+void window::set_desired_clipping_volume(clipping_volume cv)
+{
+    _desired_clipping_volume = cv;
 }
 
 void window::set_resize_callback(std::function<void(rendering_context&)> f)

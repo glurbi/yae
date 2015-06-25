@@ -7,9 +7,15 @@ void main()
     auto engine = std::make_unique<yae::sdl_engine>();
     auto window = engine->create_simple_window();
     auto cv = yae::clipping_volume{ -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 100.0f };
-    auto camera = window->create_perspective_camera(cv);
+    window->set_desired_clipping_volume(cv);
+    auto on_resize = [&](yae::rendering_context& ctx) {
+        window->adapt_camera_to_window_size<yae::perspective_camera_creator, yae::fit_all_adapter>();
+    };
+    on_resize(yae::rendering_context{});
+    window->set_resize_callback(on_resize);
+    window->close_when_keydown();
 
-    auto box = yae::make_box<float>(10,20,5);
+    auto box = yae::make_box<float>(10, 20, 5);
     auto node = std::make_shared<yae::geometry_node<float>>(std::move(box));
     auto root = std::make_shared<yae::group>();
     root->set_transform_callback([](yae::rendering_context& ctx) {
@@ -25,17 +31,8 @@ void main()
     prog->set_wire_color(yae::color4f(1.0f, 1.0f, 1.0f));
 
     window->set_render_callback([&](yae::rendering_context& ctx) {
-        camera->render(root, ctx, prog);
+        window->get_camera()->render(root, ctx, prog);
     });
-
-    window->set_resize_callback([&](yae::rendering_context& ctx) {
-        int w = window->width();
-        int h = window->height();
-        camera = window->create_perspective_camera(cv);
-        glViewport(0, 0, w, h);
-    });
-
-    window->close_when_keydown();
 
     engine->run(window.get());
 }

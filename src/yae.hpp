@@ -152,15 +152,82 @@ struct window {
     virtual std::unique_ptr<camera> create_perspective_camera(const clipping_volume& cv);
     virtual std::unique_ptr<camera> create_parallel_camera(const clipping_volume& cv);
     void close_when_keydown();
+
+    template<class CameraCreator, class ClippingVolumeAdapter>
+    void adapt_camera_to_window_size();
+
     void set_resize_callback(std::function<void(rendering_context&)> f);
     void set_render_callback(std::function<void(rendering_context&)> f);
     void set_key_event_callback(std::function<void(rendering_context&, event&)> f);
+    void set_desired_clipping_volume(clipping_volume cv);
     void render(rendering_context& ctx);
+    camera* get_camera() { return _camera.get(); }
 private:
     std::function<void(rendering_context&)> resize_callback;
     std::function<void(rendering_context&)> render_callback;
     std::function<void(rendering_context&, event&)> key_event_callback;
+    clipping_volume _desired_clipping_volume;
+    std::unique_ptr<camera> _camera;
 };
+
+struct fit_width_adapter {
+    static clipping_volume adapt(clipping_volume cv, float wh_ratio)
+    {
+        cv.bottom = cv.bottom / wh_ratio;
+        cv.top = cv.top / wh_ratio;
+        return cv;
+    }
+};
+
+struct fit_height_adapter {
+    static clipping_volume adapt(clipping_volume cv, float wh_ratio)
+    {
+        cv.left = cv.left * wh_ratio;
+        cv.right = cv.right * wh_ratio;
+        return cv;
+    }
+};
+
+struct fit_all_adapter {
+    static clipping_volume adapt(clipping_volume cv, float wh_ratio)
+    {
+        if (wh_ratio > 1.0f) {
+            cv.left = cv.left * wh_ratio;
+            cv.right = cv.right * wh_ratio;
+        } else {
+            cv.bottom = cv.bottom / wh_ratio;
+            cv.top = cv.top / wh_ratio;
+        }
+        return cv;
+    }
+};
+
+struct parallel_camera_creator {
+    static std::unique_ptr<camera> create(clipping_volume cv)
+    {
+        return std::make_unique<perspective_camera>(cv);
+    }
+};
+
+struct perspective_camera_creator {
+    static std::unique_ptr<camera> create(clipping_volume cv)
+    {
+        auto cam = std::make_unique<perspective_camera>(cv);
+        cam->move_backward(20.0f);
+        return std::unique_ptr<camera>(std::move(cam));
+    }
+};
+
+template<class CameraCreator, class ClippingVolumeAdapter>
+void window::adapt_camera_to_window_size()
+{
+    int w = width();
+    int h = height();
+    glViewport(0, 0, w, h);
+    float ar = (float)w / h;
+    clipping_volume cv = ClippingVolumeAdapter::adapt(_desired_clipping_volume, ar);
+    _camera = CameraCreator::create(cv);
+}
 
 struct engine {
     void run(window* win);
