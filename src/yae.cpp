@@ -265,28 +265,23 @@ void group::render(rendering_context& ctx)
 window::window()
 {
     set_key_event_callback([&](yae::rendering_context& ctx, yae::event evt) {});
-    _desired_clipping_volume = clipping_volume{ -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f };
-    _camera = std::make_unique<perspective_camera>(_desired_clipping_volume);
-}
-
-void window::set_desired_clipping_volume(clipping_volume cv)
-{
-    _desired_clipping_volume = cv;
+    _desired_cv = clipping_volume{ -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f };
+    _camera = std::make_shared<parallel_camera>(_desired_cv);
 }
 
 void window::set_resize_callback(std::function<void(rendering_context&)> f)
 {
-    resize_callback = f;
+    _resize_cb = f;
 }
 
 void window::set_render_callback(std::function<void(rendering_context&)> f)
 {
-    render_callback = f;
+    _render_cb = f;
 }
 
 void window::set_key_event_callback(std::function<void(rendering_context&, event&)> f)
 {
-    key_event_callback = f;
+    _key_event_cb = f;
 }
 
 std::unique_ptr<camera> window::create_perspective_camera(const clipping_volume& desired_cv)
@@ -339,13 +334,13 @@ void window::render(rendering_context& ctx)
             ctx.exit = true;
             return;
         } else if (e.value == keydown()) {
-            key_event_callback(ctx, e);
+            _key_event_cb(ctx, e);
         } else if (e.value == window_resized()) {
-            resize_callback(ctx);
+            _resize_cb(ctx);
         }
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    render_callback(ctx);
+    _render_cb(ctx);
     swap();
 }
 
