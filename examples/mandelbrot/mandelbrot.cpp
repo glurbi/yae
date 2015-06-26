@@ -74,7 +74,9 @@ void main()
     auto engine = std::make_unique<yae::sdl_engine>();
     auto window = engine->create_simple_window();
     auto cv = yae::clipping_volume{ -2.5f, 1.5f, -1.5f, 1.5f, -1.0f, 1.0f };
-    auto camera = window->create_parallel_camera(cv);
+    auto cam = std::make_shared<yae::parallel_camera>(cv);
+    window->associate_camera<yae::window::fit_all_adapter>(cam);
+    window->close_when_keydown();
 
     yae::buffer_object_builder<float> v({ -3.0f, -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -3.0f, 2.0f });
     auto canvas = std::make_shared<yae::geometry<float>>(v.get_size() / 2, 2);
@@ -85,17 +87,8 @@ void main()
     std::shared_ptr<mandelbrot_program> prog = create_mandelbrot_program();
 
     window->set_render_callback([&](yae::rendering_context& ctx) {
-        camera->render(root, ctx, prog);
+        cam->render(root, ctx, prog);
     });
-
-    window->set_resize_callback([&](yae::rendering_context& ctx) {
-        int w = window->width();
-        int h = window->height();
-        camera = window->create_parallel_camera(cv);
-        glViewport(0, 0, w, h);
-    });
-
-    window->close_when_keydown();
 
     engine->run(window.get());
 }

@@ -284,39 +284,6 @@ void window::set_key_event_callback(std::function<void(rendering_context&, event
     _key_event_cb = f;
 }
 
-std::unique_ptr<camera> window::create_perspective_camera(const clipping_volume& desired_cv)
-{
-    clipping_volume actual_cv;
-    int w = width();
-    int h = height();
-    float ar = (float)w / h;
-    actual_cv.right = desired_cv.right;
-    actual_cv.left = desired_cv.left;
-    actual_cv.bottom = desired_cv.bottom / ar;
-    actual_cv.top = desired_cv.top / ar;
-    actual_cv.nearp = desired_cv.nearp;
-    actual_cv.farp = desired_cv.farp;
-    std::unique_ptr<camera> camera = std::make_unique<perspective_camera>(actual_cv);
-    camera->move_backward(20.0f);
-    return camera;
-}
-
-std::unique_ptr<camera> window::create_parallel_camera(const clipping_volume& desired_cv)
-{
-    clipping_volume actual_cv;
-    int w = width();
-    int h = height();
-    float ar = (float)w / h;
-    actual_cv.right = desired_cv.right;
-    actual_cv.left = desired_cv.left;
-    actual_cv.bottom = desired_cv.bottom / ar;
-    actual_cv.top = desired_cv.top / ar;
-    actual_cv.nearp = desired_cv.nearp;
-    actual_cv.farp = desired_cv.farp;
-    std::unique_ptr<camera> camera = std::make_unique<parallel_camera>(actual_cv);
-    return camera;
-}
-
 void window::close_when_keydown()
 {
     set_key_event_callback([&](yae::rendering_context& ctx, yae::event evt) {
