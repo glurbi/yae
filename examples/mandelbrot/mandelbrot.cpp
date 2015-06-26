@@ -86,9 +86,11 @@ void main()
     root->add(node);
     std::shared_ptr<mandelbrot_program> prog = create_mandelbrot_program();
 
-    window->set_render_callback([&](yae::rendering_context& ctx) {
-        cam->render(root, ctx, prog);
-    });
+    auto scene = std::make_shared<yae::rendering_scene>();
+    auto re = std::make_shared<yae::rendering_element>("mandelbrot_canvas", root, prog);
+    scene->add_element(re);
+
+    window->associate_scene(scene);
 
     engine->run(window.get());
 }

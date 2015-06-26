@@ -262,26 +262,57 @@ void group::render(rendering_context& ctx)
     ctx.pop();
 }
 
+rendering_element::rendering_element(std::string name, std::shared_ptr<node> node, std::shared_ptr<program> prog)
+    : _name(name), _node(node), _prog(prog) {}
+
+void rendering_element::render(rendering_context& ctx, camera& cam)
+{
+    cam.render(_node, ctx, _prog);
+}
+
+rendering_scene::rendering_scene()
+{
+}
+ 
+void rendering_scene::add_element(std::shared_ptr<rendering_element> el)
+{
+    _rendering_elements.push_back(el);
+}
+
+void rendering_scene::render(rendering_context& ctx, camera& cam)
+{
+    for (auto el : _rendering_elements) {
+        el->render(ctx, cam);
+    }
+}
+
 window::window()
 {
     set_key_event_callback([&](yae::rendering_context& ctx, yae::event evt) {});
+    set_resize_callback([&](yae::rendering_context& ctx) {});
+    set_render_callback([&](yae::rendering_context& ctx) {});
     _desired_cv = clipping_volume{ -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f };
     _camera = std::make_shared<parallel_camera>(_desired_cv);
 }
 
-void window::set_resize_callback(std::function<void(rendering_context&)> f)
+void window::associate_scene(std::shared_ptr<rendering_scene> scene)
 {
-    _resize_cb = f;
+    _scene = scene;
 }
 
-void window::set_render_callback(std::function<void(rendering_context&)> f)
+void window::set_resize_callback(resize_callback cb)
 {
-    _render_cb = f;
+    _resize_cb = cb;
 }
 
-void window::set_key_event_callback(std::function<void(rendering_context&, event&)> f)
+void window::set_render_callback(std::function<void(rendering_context&)> cb)
 {
-    _key_event_cb = f;
+    _render_cb = cb;
+}
+
+void window::set_key_event_callback(key_event_callback cb)
+{
+    _key_event_cb = cb;
 }
 
 void window::close_when_keydown()
@@ -308,6 +339,7 @@ void window::render(rendering_context& ctx)
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     _render_cb(ctx);
+    _scene->render(ctx, *_camera);
     swap();
 }
 

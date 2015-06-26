@@ -27,9 +27,11 @@ void main()
     prog->set_solid_color(yae::color4f(0.5f, 0.5f, 0.5f));
     prog->set_wire_color(yae::color4f(1.0f, 1.0f, 1.0f));
 
-    window->set_render_callback([&](yae::rendering_context& ctx) {
-        cam->render(root, ctx, prog);
-    });
+    auto scene = std::make_shared<yae::rendering_scene>();
+    auto re = std::make_shared<yae::rendering_element>("wireframe_block", root, prog);
+    scene->add_element(re);
+    
+    window->associate_scene(scene);
 
     engine->run(window.get());
 }

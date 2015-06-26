@@ -23,19 +23,20 @@ void main()
     multi_hero->set_vertex_positions(b.build());
     multi_hero->set_vertex_tex_coords(b.build());
     auto node = std::make_shared<yae::geometry_node<float>>(multi_hero);
-    auto cam_height = cam->get_height();
-    auto cam_width = cam->get_width();
     auto root = std::make_shared<yae::group>();
     root->add(node);
-    auto texture_program = yae::texture_program::create();
-    texture_program->set_texture(hero_texture);
+    auto prog = yae::texture_program::create();
+    prog->set_texture(hero_texture);
+
+    auto scene = std::make_shared<yae::rendering_scene>();
+    auto re = std::make_shared<yae::rendering_element>("smiley_canvas", root, prog);
+    scene->add_element(re);
 
     window->set_render_callback([&](yae::rendering_context& ctx) {
         cam->rotate_z(0.5);
-        auto f = (float)(1.0+0.5*sin(0.1*2.0*3.1415927*ctx.elapsed_time_seconds));
-        cam->set_opening(cam_width * f, cam_height * f);
-        cam->render(root, ctx, texture_program);
     });
+
+    window->associate_scene(scene);
 
     engine->run(window.get());
 }

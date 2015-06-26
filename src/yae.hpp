@@ -139,6 +139,27 @@ struct event {
     int value;
 };
 
+struct rendering_element {
+    rendering_element(
+        std::string name,
+        std::shared_ptr<node> node,
+        std::shared_ptr<program> prog
+    );
+    void render(rendering_context& ctx, camera& cam);
+private:
+    std::string _name;
+    std::shared_ptr<node> _node;
+    std::shared_ptr<program> _prog;
+};
+
+struct rendering_scene {
+    rendering_scene();
+    void add_element(std::shared_ptr<rendering_element> el);
+    void render(rendering_context& ctx, camera& cam);
+private:
+    std::vector<std::shared_ptr<rendering_element>> _rendering_elements;
+};
+
 struct window {
 
     typedef std::function<void(rendering_context&)> resize_callback;
@@ -155,9 +176,10 @@ struct window {
     virtual int keydown() = 0;
     virtual int window_resized() = 0;
     void close_when_keydown();
-    void set_resize_callback(std::function<void(rendering_context&)> f);
-    void set_render_callback(std::function<void(rendering_context&)> f);
-    void set_key_event_callback(std::function<void(rendering_context&, event&)> f);
+    void set_resize_callback(resize_callback f);
+    void set_render_callback(render_callback f);
+    void set_key_event_callback(key_event_callback f);
+    void associate_scene(std::shared_ptr<rendering_scene> scene);
     void render(rendering_context& ctx);
 
     struct fit_width_adapter;
@@ -166,13 +188,14 @@ struct window {
 
     template<class ClippingVolumeAdapter>
     void associate_camera(std::shared_ptr<camera> cam);
-
+    
 private:
     resize_callback _resize_cb;
-    render_callback _render_cb;
+    resize_callback _render_cb;
     key_event_callback _key_event_cb;
     clipping_volume _desired_cv;
     std::shared_ptr<camera> _camera;
+    std::shared_ptr<rendering_scene> _scene;
 };
 
 template<class ClippingVolumeAdapter>
