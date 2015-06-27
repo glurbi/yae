@@ -2,7 +2,7 @@
 #include "shader.hpp"
 #include "sdl.hpp"
 
-void main()
+int main()
 {
     auto engine = std::make_unique<yae::sdl_engine>();
     auto window = engine->create_simple_window();
@@ -39,4 +39,6 @@ void main()
     window->associate_scene(scene);
 
     engine->run(window.get());
+
+    return 0;
 }

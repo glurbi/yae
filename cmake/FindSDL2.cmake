@@ -9,11 +9,11 @@
 
 IF (WIN32)
 
-	FIND_PATH(
+    FIND_PATH(
         SDL2_INCLUDE_PATH SDL.h
-		$ENV{PROGRAMFILES}/SDL2/include
+        $ENV{PROGRAMFILES}/SDL2/include
         "D:/Program Files (x86)/SDL2-2.0.3/include"
-		DOC "The directory where SDL.h resides")
+        DOC "The directory where SDL.h resides")
 
     FIND_LIBRARY(
         SDL2_LIBRARY
@@ -34,25 +34,26 @@ IF (WIN32)
 ELSE (WIN32)
 
 	FIND_PATH(
-        SDL2_INCLUDE_PATH SDL.h
-		/usr/include
-		DOC "The directory where SDL.h resides")
+            SDL2_INCLUDE_PATH SDL.h
+            /usr/include
+            /usr/include/SDL2
+            DOC "The directory where SDL.h resides")
 
 	FIND_LIBRARY(
-        SDL2_LIBRARY
-		NAMES SDL2 SDL2
-		PATHS
-		/usr/lib64
-		/usr/lib
-		DOC "The SDL2 library")
+            SDL2_LIBRARY
+            NAMES SDL2 SDL2
+            PATHS
+            /usr/lib64
+            /usr/lib
+            DOC "The SDL2 library")
 
 	FIND_LIBRARY(
-        SDL2_IMAGE_LIBRARY
-		NAMES SDL2_image
-		PATHS
-		/usr/lib64
-		/usr/lib
-		DOC "The SDL2_image library")
+            SDL2_IMAGE_LIBRARY
+            NAMES SDL2_image
+            PATHS
+            /usr/lib64
+            /usr/lib
+            DOC "The SDL2_image library")
         
 ENDIF (WIN32)
 

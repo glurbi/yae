@@ -69,7 +69,7 @@ static std::shared_ptr<mandelbrot_program> create_mandelbrot_program()
     return std::shared_ptr<mandelbrot_program>(new mandelbrot_program(attribute_indices));
 }
 
-void main()
+int main()
 {
     auto engine = std::make_unique<yae::sdl_engine>();
     auto window = engine->create_simple_window();
@@ -93,4 +93,6 @@ void main()
     window->associate_scene(scene);
 
     engine->run(window.get());
+
+    return 0;
 }

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <cstring>
 
 #include "yae.hpp"
 

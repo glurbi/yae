@@ -11,6 +11,7 @@
 
 #include "matrix.hpp"
 #include "geometry.hpp"
+#include "shader.hpp"
 
 namespace yae {
 
@@ -191,7 +192,7 @@ struct window {
     
 private:
     resize_callback _resize_cb;
-    resize_callback _render_cb;
+    render_callback _render_cb;
     key_event_callback _key_event_cb;
     clipping_volume _desired_cv;
     std::shared_ptr<camera> _camera;
@@ -210,7 +211,8 @@ void window::associate_camera(std::shared_ptr<camera> cam)
         float ar = (float)w / h;
         _camera->cv = ClippingVolumeAdapter::adapt(_desired_cv, ar);
     });
-    _resize_cb(yae::rendering_context());
+    auto rc = yae::rendering_context();
+    _resize_cb(rc);
 }
 
 struct window::fit_width_adapter {
