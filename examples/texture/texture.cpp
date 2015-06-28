@@ -7,8 +7,6 @@ int main()
     auto engine = std::make_unique<yae::sdl_engine>();
     auto window = engine->create_simple_window();
     auto cv = yae::clipping_volume{ -8.0f, 8.0f, -6.0f, 6.0f, 1.0f, -1.0f };
-    auto cam = std::make_shared<yae::parallel_camera>(cv);
-    window->associate_camera<yae::window::fit_all_adapter>(cam);
     window->close_when_keydown();
 
     auto rwop = SDL_RWFromFile("smiley.png", "rb");
@@ -29,14 +27,16 @@ int main()
     prog->set_texture(hero_texture);
 
     auto scene = std::make_shared<yae::rendering_scene>();
+    auto cam = std::make_shared<yae::parallel_camera>(cv);
     auto nre = std::make_shared<yae::node_rendering_element>("smiley_canvas", root, prog, cam);
     scene->add_element(nre);
+    scene->associate_camera<yae::rendering_scene::fit_all_adapter>(cam, window.get());
 
     window->set_render_callback([&](yae::rendering_context& ctx) {
         cam->rotate_z(0.5);
     });
 
-    window->associate_scene(scene);
+    window->add_scene(scene);
 
     engine->run(window.get());
 

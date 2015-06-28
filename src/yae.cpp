@@ -299,6 +299,8 @@ custom_rendering_element::callback yae::create_prepare_callback(color4f c)
 
 rendering_scene::rendering_scene()
 {
+    _desired_cv = clipping_volume{ -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f };
+    _camera = std::make_shared<parallel_camera>(_desired_cv);
 }
  
 void rendering_scene::add_element(std::shared_ptr<rendering_element> el)
@@ -316,20 +318,17 @@ void rendering_scene::render(rendering_context& ctx)
 window::window()
 {
     set_key_event_callback([&](yae::rendering_context& ctx, yae::event evt) {});
-    set_resize_callback([&](yae::rendering_context& ctx) {});
     set_render_callback([&](yae::rendering_context& ctx) {});
-    _desired_cv = clipping_volume{ -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f };
-    _camera = std::make_shared<parallel_camera>(_desired_cv);
 }
 
-void window::associate_scene(std::shared_ptr<rendering_scene> scene)
+void window::add_scene(std::shared_ptr<rendering_scene> scene)
 {
-    _scene = scene;
+    _scenes.push_back(scene);
 }
 
-void window::set_resize_callback(resize_callback cb)
+void window::add_resize_callback(resize_callback cb)
 {
-    _resize_cb = cb;
+    _resize_callbacks.push_back(cb);
 }
 
 void window::set_render_callback(render_callback cb)
@@ -351,21 +350,21 @@ void window::close_when_keydown()
     });
 }
 
-clipping_volume window::fit_width_adapter::adapt(clipping_volume cv, float wh_ratio)
+clipping_volume rendering_scene::fit_width_adapter::adapt(clipping_volume cv, float wh_ratio)
 {
     cv.bottom = cv.bottom / wh_ratio;
     cv.top = cv.top / wh_ratio;
     return cv;
 }
 
-clipping_volume window::fit_height_adapter::adapt(clipping_volume cv, float wh_ratio)
+clipping_volume rendering_scene::fit_height_adapter::adapt(clipping_volume cv, float wh_ratio)
 {
     cv.left = cv.left * wh_ratio;
     cv.right = cv.right * wh_ratio;
     return cv;
 }
 
-clipping_volume window::fit_all_adapter::adapt(clipping_volume cv, float wh_ratio)
+clipping_volume rendering_scene::fit_all_adapter::adapt(clipping_volume cv, float wh_ratio)
 {
     if (wh_ratio > 1.0f) {
         cv.left = cv.left * wh_ratio;
@@ -388,11 +387,15 @@ void window::render(rendering_context& ctx)
         } else if (e.value == keydown()) {
             _key_event_cb(ctx, e);
         } else if (e.value == window_resized()) {
-            _resize_cb(ctx);
+            for (auto& cb : _resize_callbacks) {
+                cb(ctx);
+            }
         }
     }
     _render_cb(ctx);
-    _scene->render(ctx);
+    for (auto scene : _scenes) {
+        scene->render(ctx);
+    }
     swap();
 }
 

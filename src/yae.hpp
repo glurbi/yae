@@ -20,6 +20,7 @@ void check_for_opengl_errors();
 class rendering_context;
 class program;
 class shader_program;
+class window;
     
 class timer {
 public:
@@ -178,8 +179,26 @@ struct rendering_scene {
     rendering_scene();
     void add_element(std::shared_ptr<rendering_element> el);
     void render(rendering_context& ctx);
+
+    struct fit_width_adapter {
+        static clipping_volume adapt(clipping_volume cv, float wh_ratio);
+    };
+
+    struct fit_height_adapter {
+        static clipping_volume adapt(clipping_volume cv, float wh_ratio);
+    };
+
+    struct fit_all_adapter {
+        static clipping_volume adapt(clipping_volume cv, float wh_ratio);
+    };
+
+    template<class ClippingVolumeAdapter = fit_all_adapter>
+    void associate_camera(std::shared_ptr<camera> cam, window* win);
+
 private:
     std::vector<std::shared_ptr<rendering_element>> _rendering_elements;
+    clipping_volume _desired_cv;
+    std::shared_ptr<camera> _camera;
 };
 
 struct window {
@@ -198,50 +217,34 @@ struct window {
     virtual int keydown() = 0;
     virtual int window_resized() = 0;
     void close_when_keydown();
-    void set_resize_callback(resize_callback f);
+    void add_resize_callback(resize_callback f);
     void set_render_callback(render_callback f);
     void set_key_event_callback(key_event_callback f);
-    void associate_scene(std::shared_ptr<rendering_scene> scene);
+    void add_scene(std::shared_ptr<rendering_scene> scene);
     void render(rendering_context& ctx);
-
-    struct fit_width_adapter {
-        static clipping_volume adapt(clipping_volume cv, float wh_ratio);
-    };
-
-    struct fit_height_adapter {
-        static clipping_volume adapt(clipping_volume cv, float wh_ratio);
-    };
-
-    struct fit_all_adapter {
-        static clipping_volume adapt(clipping_volume cv, float wh_ratio);
-    };
-
-    template<class ClippingVolumeAdapter = fit_all_adapter>
-    void associate_camera(std::shared_ptr<camera> cam);
     
 private:
-    resize_callback _resize_cb;
+    std::vector<resize_callback> _resize_callbacks;
     render_callback _render_cb;
     key_event_callback _key_event_cb;
-    clipping_volume _desired_cv;
-    std::shared_ptr<camera> _camera;
-    std::shared_ptr<rendering_scene> _scene;
+    std::vector<std::shared_ptr<rendering_scene>> _scenes;
 };
 
 template<class ClippingVolumeAdapter>
-void window::associate_camera(std::shared_ptr<camera> cam)
+void rendering_scene::associate_camera(std::shared_ptr<camera> cam, window* win)
 {
     _camera = cam;
     _desired_cv = _camera->cv;
-    set_resize_callback([&](yae::rendering_context& ctx) {
-        int w = width();
-        int h = height();
+    auto cb = [=](yae::rendering_context& ctx) {
+        int w = win->width();
+        int h = win->height();
         glViewport(0, 0, w, h);
         float ar = (float)w / h;
         _camera->cv = ClippingVolumeAdapter::adapt(_desired_cv, ar);
-    });
-    auto rc = yae::rendering_context();
-    _resize_cb(rc);
+    };
+    win->add_resize_callback(cb);
+    auto ctx = yae::rendering_context();
+    cb(ctx);
 }
 
 struct engine {
