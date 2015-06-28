@@ -29,8 +29,8 @@ int main()
     prog->set_texture(hero_texture);
 
     auto scene = std::make_shared<yae::rendering_scene>();
-    auto re = std::make_shared<yae::rendering_element>("smiley_canvas", root, prog);
-    scene->add_element(re);
+    auto nre = std::make_shared<yae::node_rendering_element>("smiley_canvas", root, prog, cam);
+    scene->add_element(nre);
 
     window->set_render_callback([&](yae::rendering_context& ctx) {
         cam->rotate_z(0.5);

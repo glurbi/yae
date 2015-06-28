@@ -263,12 +263,20 @@ void group::render(rendering_context& ctx)
     ctx.pop();
 }
 
-rendering_element::rendering_element(std::string name, std::shared_ptr<node> node, std::shared_ptr<program> prog)
-    : _name(name), _node(node), _prog(prog) {}
+rendering_element::rendering_element(std::string name)
+    : _name(name) {}
 
-void rendering_element::render(rendering_context& ctx, camera& cam)
+
+node_rendering_element::node_rendering_element(
+        std::string name,
+        std::shared_ptr<node> node,
+        std::shared_ptr<program> prog,
+        std::shared_ptr<camera> camera)
+    : rendering_element(name), _node(node), _prog(prog), _camera(camera) {}
+
+void node_rendering_element::render(rendering_context& ctx)
 {
-    cam.render(_node, ctx, _prog);
+    _camera->render(_node, ctx, _prog);
 }
 
 rendering_scene::rendering_scene()
@@ -280,10 +288,10 @@ void rendering_scene::add_element(std::shared_ptr<rendering_element> el)
     _rendering_elements.push_back(el);
 }
 
-void rendering_scene::render(rendering_context& ctx, camera& cam)
+void rendering_scene::render(rendering_context& ctx)
 {
     for (auto el : _rendering_elements) {
-        el->render(ctx, cam);
+        el->render(ctx);
     }
 }
 
@@ -367,7 +375,7 @@ void window::render(rendering_context& ctx)
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     _render_cb(ctx);
-    _scene->render(ctx, *_camera);
+    _scene->render(ctx);
     swap();
 }
 

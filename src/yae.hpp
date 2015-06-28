@@ -141,22 +141,41 @@ struct event {
 };
 
 struct rendering_element {
-    rendering_element(
+    rendering_element(std::string name);
+    virtual void render(rendering_context& ctx) = 0;
+protected:
+    std::string _name;
+};
+
+struct node_rendering_element : public rendering_element {
+    node_rendering_element(
         std::string name,
         std::shared_ptr<node> node,
-        std::shared_ptr<program> prog
+        std::shared_ptr<program> prog,
+        std::shared_ptr<camera> _camera
     );
-    void render(rendering_context& ctx, camera& cam);
+    virtual void render(rendering_context& ctx);
 private:
-    std::string _name;
     std::shared_ptr<node> _node;
     std::shared_ptr<program> _prog;
+    std::shared_ptr<camera> _camera;
+};
+
+struct custom_rendering_element : public rendering_element {
+    typedef std::function<void(rendering_context&)> custom_rendering_callback;
+    custom_rendering_element(
+        std::string name,
+        custom_rendering_callback custom_rendering_cb
+    );
+    virtual void render(rendering_context& ctx);
+private:
+    custom_rendering_callback custom_rendering_cb;
 };
 
 struct rendering_scene {
     rendering_scene();
     void add_element(std::shared_ptr<rendering_element> el);
-    void render(rendering_context& ctx, camera& cam);
+    void render(rendering_context& ctx);
 private:
     std::vector<std::shared_ptr<rendering_element>> _rendering_elements;
 };
@@ -222,7 +241,6 @@ void window::associate_camera(std::shared_ptr<camera> cam)
     auto rc = yae::rendering_context();
     _resize_cb(rc);
 }
-
 
 struct engine {
     void run(window* win);

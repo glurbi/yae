@@ -28,8 +28,8 @@ int main()
     prog->set_wire_color(yae::color4f(1.0f, 1.0f, 1.0f));
 
     auto scene = std::make_shared<yae::rendering_scene>();
-    auto re = std::make_shared<yae::rendering_element>("wireframe_block", root, prog);
-    scene->add_element(re);
+    auto nre = std::make_shared<yae::node_rendering_element>("wireframe_block", root, prog, cam);
+    scene->add_element(nre);
     
     window->associate_scene(scene);
 
