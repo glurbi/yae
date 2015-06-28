@@ -325,6 +325,33 @@ void window::close_when_keydown()
     });
 }
 
+clipping_volume window::fit_width_adapter::adapt(clipping_volume cv, float wh_ratio)
+{
+    cv.bottom = cv.bottom / wh_ratio;
+    cv.top = cv.top / wh_ratio;
+    return cv;
+}
+
+clipping_volume window::fit_height_adapter::adapt(clipping_volume cv, float wh_ratio)
+{
+    cv.left = cv.left * wh_ratio;
+    cv.right = cv.right * wh_ratio;
+    return cv;
+}
+
+clipping_volume window::fit_all_adapter::adapt(clipping_volume cv, float wh_ratio)
+{
+    if (wh_ratio > 1.0f) {
+        cv.left = cv.left * wh_ratio;
+        cv.right = cv.right * wh_ratio;
+    }
+    else {
+        cv.bottom = cv.bottom / wh_ratio;
+        cv.top = cv.top / wh_ratio;
+    }
+    return cv;
+}
+
 void window::render(rendering_context& ctx)
 {
     make_current();

@@ -183,11 +183,19 @@ struct window {
     void associate_scene(std::shared_ptr<rendering_scene> scene);
     void render(rendering_context& ctx);
 
-    struct fit_width_adapter;
-    struct fit_height_adapter;
-    struct fit_all_adapter;
+    struct fit_width_adapter {
+        static clipping_volume adapt(clipping_volume cv, float wh_ratio);
+    };
 
-    template<class ClippingVolumeAdapter>
+    struct fit_height_adapter {
+        static clipping_volume adapt(clipping_volume cv, float wh_ratio);
+    };
+
+    struct fit_all_adapter {
+        static clipping_volume adapt(clipping_volume cv, float wh_ratio);
+    };
+
+    template<class ClippingVolumeAdapter = fit_all_adapter>
     void associate_camera(std::shared_ptr<camera> cam);
     
 private:
@@ -215,38 +223,6 @@ void window::associate_camera(std::shared_ptr<camera> cam)
     _resize_cb(rc);
 }
 
-struct window::fit_width_adapter {
-    static clipping_volume adapt(clipping_volume cv, float wh_ratio)
-    {
-        cv.bottom = cv.bottom / wh_ratio;
-        cv.top = cv.top / wh_ratio;
-        return cv;
-    }
-};
-
-struct window::fit_height_adapter {
-    static clipping_volume adapt(clipping_volume cv, float wh_ratio)
-    {
-        cv.left = cv.left * wh_ratio;
-        cv.right = cv.right * wh_ratio;
-        return cv;
-    }
-};
-
-struct window::fit_all_adapter {
-    static clipping_volume adapt(clipping_volume cv, float wh_ratio)
-    {
-        if (wh_ratio > 1.0f) {
-            cv.left = cv.left * wh_ratio;
-            cv.right = cv.right * wh_ratio;
-        }
-        else {
-            cv.bottom = cv.bottom / wh_ratio;
-            cv.top = cv.top / wh_ratio;
-        }
-        return cv;
-    }
-};
 
 struct engine {
     void run(window* win);
