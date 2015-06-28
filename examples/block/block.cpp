@@ -27,7 +27,7 @@ int main()
     auto scene = std::make_shared<yae::rendering_scene>();
     auto cam = std::make_shared<yae::perspective_camera>(cv);
     cam->move_backward(20.0f);
-    scene->associate_camera<yae::rendering_scene::fit_all_adapter>(cam, window.get());
+    scene->associate_camera<yae::rendering_scene::fit_all_adapter>(cam, window.get(), yae::viewport{0.0f, 0.0f, 0.5f, 0.5f});
     auto prepare_cb = yae::create_prepare_callback(yae::color4f(1.0f, 0.0f, 0.0f, 0.0f));
     auto cre = std::make_shared<yae::custom_rendering_element>("clear_buffer", prepare_cb);
     scene->add_element(cre);

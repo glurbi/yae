@@ -86,7 +86,7 @@ int main()
 
     auto scene = std::make_shared<yae::rendering_scene>();
     auto cam = std::make_shared<yae::parallel_camera>(cv);
-    scene->associate_camera<yae::rendering_scene::fit_all_adapter>(cam, window.get());
+    scene->associate_camera<yae::rendering_scene::fit_all_adapter>(cam, window.get(), yae::viewport{0.0f, 0.0f, 1.0f, 1.0f});
     auto nre = std::make_shared<yae::node_rendering_element>("mandelbrot_canvas", root, prog, cam);
     scene->add_element(nre);
 

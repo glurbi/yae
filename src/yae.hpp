@@ -76,6 +76,13 @@ struct clipping_volume {
     float farp;
 };
 
+struct viewport {
+    float x_percent;
+    float y_percent;
+    float width_percent;
+    float height_percent;
+};
+
 // cf http://www.codecolony.de/opengl.htm#camera2
 struct camera {
     camera(const clipping_volume& cv);
@@ -193,7 +200,7 @@ struct rendering_scene {
     };
 
     template<class ClippingVolumeAdapter = fit_all_adapter>
-    void associate_camera(std::shared_ptr<camera> cam, window* win);
+    void associate_camera(std::shared_ptr<camera> cam, window* win, viewport vp);
 
 private:
     std::vector<std::shared_ptr<rendering_element>> _rendering_elements;
@@ -231,14 +238,18 @@ private:
 };
 
 template<class ClippingVolumeAdapter>
-void rendering_scene::associate_camera(std::shared_ptr<camera> cam, window* win)
+void rendering_scene::associate_camera(std::shared_ptr<camera> cam, window* win, viewport vp)
 {
     _camera = cam;
     _desired_cv = _camera->cv;
     auto cb = [=](yae::rendering_context& ctx) {
-        int w = win->width();
-        int h = win->height();
-        glViewport(0, 0, w, h);
+        int win_w = win->width();
+        int win_h = win->height();
+        int x = vp.x_percent * win_w;
+        int y = vp.y_percent * win_h;
+        int w = vp.width_percent * win_w;
+        int h = vp.height_percent * win_h;
+        glViewport(x, y, w, h);
         float ar = (float)w / h;
         _camera->cv = ClippingVolumeAdapter::adapt(_desired_cv, ar);
     };

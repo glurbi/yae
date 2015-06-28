@@ -30,7 +30,7 @@ int main()
     auto cam = std::make_shared<yae::parallel_camera>(cv);
     auto nre = std::make_shared<yae::node_rendering_element>("smiley_canvas", root, prog, cam);
     scene->add_element(nre);
-    scene->associate_camera<yae::rendering_scene::fit_all_adapter>(cam, window.get());
+    scene->associate_camera<yae::rendering_scene::fit_all_adapter>(cam, window.get(), yae::viewport{0.0f, 0.0f, 1.0f, 1.0f});
 
     window->set_render_callback([&](yae::rendering_context& ctx) {
         cam->rotate_z(0.5);
