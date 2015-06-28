@@ -279,6 +279,24 @@ void node_rendering_element::render(rendering_context& ctx)
     _camera->render(_node, ctx, _prog);
 }
 
+custom_rendering_element::custom_rendering_element(
+        std::string name,
+        callback cb)
+    : rendering_element(name), _callback(cb) {}
+
+void custom_rendering_element::render(rendering_context& ctx)
+{
+    _callback(ctx);
+}
+
+custom_rendering_element::callback yae::create_prepare_callback(color4f c)
+{
+    return ([=](yae::rendering_context& ctx) {
+        glClearColor(c.r(), c.g(), c.b(), c.a());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    });
+}
+
 rendering_scene::rendering_scene()
 {
 }
@@ -314,7 +332,7 @@ void window::set_resize_callback(resize_callback cb)
     _resize_cb = cb;
 }
 
-void window::set_render_callback(std::function<void(rendering_context&)> cb)
+void window::set_render_callback(render_callback cb)
 {
     _render_cb = cb;
 }
@@ -373,7 +391,6 @@ void window::render(rendering_context& ctx)
             _resize_cb(ctx);
         }
     }
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     _render_cb(ctx);
     _scene->render(ctx);
     swap();

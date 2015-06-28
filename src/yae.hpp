@@ -162,15 +162,17 @@ private:
 };
 
 struct custom_rendering_element : public rendering_element {
-    typedef std::function<void(rendering_context&)> custom_rendering_callback;
+    typedef std::function<void(rendering_context&)> callback;
     custom_rendering_element(
         std::string name,
-        custom_rendering_callback custom_rendering_cb
+        callback cb
     );
     virtual void render(rendering_context& ctx);
 private:
-    custom_rendering_callback custom_rendering_cb;
+    callback _callback;
 };
+
+custom_rendering_element::callback create_prepare_callback(color4f c);
 
 struct rendering_scene {
     rendering_scene();

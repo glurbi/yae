@@ -28,6 +28,9 @@ int main()
     prog->set_wire_color(yae::color4f(1.0f, 1.0f, 1.0f));
 
     auto scene = std::make_shared<yae::rendering_scene>();
+    auto prepare_cb = yae::create_prepare_callback(yae::color4f(1.0f, 0.0f, 0.0f, 0.0f));
+    auto cre = std::make_shared<yae::custom_rendering_element>("clear_buffer", prepare_cb);
+    scene->add_element(cre);
     auto nre = std::make_shared<yae::node_rendering_element>("wireframe_block", root, prog, cam);
     scene->add_element(nre);
     
