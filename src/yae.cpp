@@ -289,11 +289,14 @@ void custom_rendering_element::render(rendering_context& ctx)
     _callback(ctx);
 }
 
-custom_rendering_element::callback yae::create_prepare_callback(color4f c)
+custom_rendering_element::callback yae::clear_viewport_callback(color4f c, viewport& vp)
 {
-    return ([=](yae::rendering_context& ctx) {
+    return ([=, &vp](yae::rendering_context& ctx) {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(vp.x, vp.y, vp.w, vp.h);
         glClearColor(c.r(), c.g(), c.b(), c.a());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(vp.x, vp.y, vp.w, vp.h);
     });
 }
 
@@ -374,6 +377,11 @@ clipping_volume rendering_scene::fit_all_adapter::adapt(clipping_volume cv, floa
         cv.bottom = cv.bottom / wh_ratio;
         cv.top = cv.top / wh_ratio;
     }
+    return cv;
+}
+
+clipping_volume rendering_scene::ignore_ratio_adapter::adapt(clipping_volume cv, float wh_ratio)
+{
     return cv;
 }
 

@@ -76,11 +76,18 @@ struct clipping_volume {
     float farp;
 };
 
-struct viewport {
+struct viewport_relative {
     float x_percent;
     float y_percent;
     float width_percent;
     float height_percent;
+};
+
+struct viewport {
+    int x;
+    int y;
+    int w;
+    int h;
 };
 
 // cf http://www.codecolony.de/opengl.htm#camera2
@@ -180,7 +187,7 @@ private:
     callback _callback;
 };
 
-custom_rendering_element::callback create_prepare_callback(color4f c);
+custom_rendering_element::callback clear_viewport_callback(color4f c, viewport& vp);
 
 struct rendering_scene {
     rendering_scene();
@@ -199,12 +206,19 @@ struct rendering_scene {
         static clipping_volume adapt(clipping_volume cv, float wh_ratio);
     };
 
+    struct ignore_ratio_adapter {
+        static clipping_volume adapt(clipping_volume cv, float wh_ratio);
+    };
+
     template<class ClippingVolumeAdapter = fit_all_adapter>
-    void associate_camera(std::shared_ptr<camera> cam, window* win, viewport vp);
+    void associate_camera(std::shared_ptr<camera> cam, window* win, viewport_relative vpr);
+
+    inline viewport& get_viewport() { return _viewport; }
 
 private:
     std::vector<std::shared_ptr<rendering_element>> _rendering_elements;
     clipping_volume _desired_cv;
+    viewport _viewport;    
     std::shared_ptr<camera> _camera;
 };
 
@@ -238,19 +252,18 @@ private:
 };
 
 template<class ClippingVolumeAdapter>
-void rendering_scene::associate_camera(std::shared_ptr<camera> cam, window* win, viewport vp)
+void rendering_scene::associate_camera(std::shared_ptr<camera> cam, window* win, viewport_relative vpr)
 {
     _camera = cam;
     _desired_cv = _camera->cv;
     auto cb = [=](yae::rendering_context& ctx) {
         int win_w = win->width();
         int win_h = win->height();
-        int x = vp.x_percent * win_w;
-        int y = vp.y_percent * win_h;
-        int w = vp.width_percent * win_w;
-        int h = vp.height_percent * win_h;
-        glViewport(x, y, w, h);
-        float ar = (float)w / h;
+        _viewport.x = vpr.x_percent * win_w;
+        _viewport.y = vpr.y_percent * win_h;
+        _viewport.w = vpr.width_percent * win_w;
+        _viewport.h = vpr.height_percent * win_h;
+        float ar = (float)_viewport.w / _viewport.h;
         _camera->cv = ClippingVolumeAdapter::adapt(_desired_cv, ar);
     };
     win->add_resize_callback(cb);
