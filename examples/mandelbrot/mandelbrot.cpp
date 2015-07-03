@@ -76,7 +76,7 @@ int main()
     auto cv = yae::clipping_volume{ -2.5f, 1.5f, -1.5f, 1.5f, -1.0f, 1.0f };
     window->close_when_keydown();
 
-    yae::buffer_object_builder<float> v({ -3.0f, -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -3.0f, 2.0f });
+    yae::buffer_object_builder<float> v({ -5.0f, -5.0f, 5.0f, -5.0f, 5.0f, 5.0f, -5.0f, 5.0f });
     auto canvas = std::make_shared<yae::geometry<float>>(v.get_size() / 2, 2);
     canvas->set_vertex_positions(v.build());
     auto node = std::make_shared<yae::geometry_node<float>>(std::move(canvas));
@@ -87,7 +87,11 @@ int main()
     auto scene = std::make_shared<yae::rendering_scene>();
     auto cam = std::make_shared<yae::parallel_camera>(cv);
     scene->associate_camera<yae::rendering_scene::fit_all_adapter>(cam, window.get(), yae::viewport_relative{0.0f, 0.0f, 1.0f, 1.0f});
+    auto bg_color = yae::color4f{ 0.0f, 0.0f, 0.0f, 0.0f };
+    auto clear_viewport_cb = yae::clear_viewport_callback(bg_color, scene->get_viewport());
+    auto cre = std::make_shared<yae::custom_rendering_element>("clear_viewport", clear_viewport_cb);
     auto nre = std::make_shared<yae::node_rendering_element>("mandelbrot_canvas", root, prog, cam);
+    scene->add_element(cre);
     scene->add_element(nre);
 
     window->add_scene(scene);
