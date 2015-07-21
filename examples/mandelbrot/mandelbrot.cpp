@@ -51,7 +51,8 @@ void main(void)
     for (; i < max_i; i++) {
         z = vec2(z.x*z.x - z.y*z.y, 2*z.x*z.y) + c;
         if (length(z) > 2.0f) {
-            gl_FragColor = vec4(0.5f, 10.0f*float(i)/float(max_i), 0.5f, 1.0f);
+            float base = log(float(i))/log(float(max_i));
+            gl_FragColor = vec4(base, 1.0f-base, 1.0f-base, 1.0f);
         };
     }
 }
