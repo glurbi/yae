@@ -16,24 +16,24 @@ enum vertex_attribute {
 };
 
 template<class T, GLenum T_primitive = GL_QUADS>
-class geometry {
+struct geometry {
 
-public:
 	geometry(GLsizei count, GLint dimensions);
 	~geometry();
 
-	void set_vertex_positions(GLuint positionsId_);
-    void set_vertex_tex_coords(GLuint texCoordsId_);
-    void set_vertex_normals(GLuint normalsId_);
+    inline void set_vertex_positions(GLuint positionsId_) { positions_id = positionsId_; }
+    inline void set_vertex_tex_coords(GLuint texCoordsId_) { tex_coords_id = texCoordsId_; }
+    inline void set_vertex_normals(GLuint normalsId_) { normals_id = normalsId_; }
+
     void set_vertex_positions(void* data, long size);
 	void set_vertex_tex_coords(void* data, long size);
     void set_vertex_normals(void* data, long size);
 
-    GLuint get_positions_id() const;
-    GLuint get_tex_coords_id() const;
-    GLuint get_normals_id() const;
-    GLsizei get_count() const;
-    GLint get_dimensions() const;
+    inline GLuint get_positions_id() const { return positions_id; }
+    inline GLuint get_tex_coords_id() const { return tex_coords_id; }
+    inline GLuint get_normals_id() const { return normals_id; }
+    inline GLsizei get_count() const { return count; }
+    inline GLint get_dimensions() const { return dimensions; }
 
 private:
 	GLuint positions_id;
@@ -43,25 +43,25 @@ private:
     GLint dimensions;
 };
 
-template <class T>
-class buffer_object_builder {
+template<class T>
+struct buffer_object_builder {
 
-public:
-    buffer_object_builder(std::vector<T> data_);
-    void* get_data();
-    GLsizeiptr get_size();
-    GLsizeiptr get_count();
+    inline buffer_object_builder(std::vector<T> data) : _data(data) {}
+    inline void* get_data() { return &_data[0]; }
+    inline GLsizeiptr get_size() { return _data.size() * sizeof(T); }
+    inline GLsizeiptr get_count() { return _data.size(); }
     GLuint build();
 
 private:
-    std::vector<T> data;
+    std::vector<T> _data;
 };
 
-template <class T>
+template<class T>
 struct geometry_builder {
     geometry_builder(GLint dimensions);
     std::unique_ptr<geometry<T>> build();
     geometry_builder<T>& operator<<(const std::vector<T>& v);
+    geometry_builder<T>& append(const geometry<T>& g);
     geometry_builder<T>& make_grid(int nx, int ny);
     geometry_builder<T>& transform(const matrix44f& tr);
     geometry_builder<T>& begin();
@@ -71,11 +71,9 @@ private:
     GLint dimensions;
 };
 
-template <class T>
-std::unique_ptr<geometry<T>> make_grid(int nx, int ny);
-
-template <class T>
-std::unique_ptr<geometry<T>> make_box(int nx, int ny, int nz);
+template<class T> std::unique_ptr<geometry<T>> make_grid(int nx, int ny);
+template<class T> std::unique_ptr<geometry<T>> make_box(int nx, int ny, int nz);
+template<class T> std::unique_ptr<geometry<T>> make_uv_sphere(int nlong, int nlat);
 
 template<class T, GLenum T_primitive>
 geometry<T, T_primitive>::geometry(GLsizei count, GLint dimensions)
@@ -89,24 +87,6 @@ geometry<T, T_primitive>::~geometry()
     glDeleteBuffers(1, &positions_id);
     glDeleteBuffers(1, &tex_coords_id);
     glDeleteBuffers(1, &normals_id);
-}
-
-template<class T, GLenum T_primitive>
-void geometry<T, T_primitive>::set_vertex_positions(GLuint positionsId_)
-{
-    positions_id = positionsId_;
-}
-
-template<class T, GLenum T_primitive>
-void geometry<T, T_primitive>::set_vertex_tex_coords(GLuint texCoordsId_)
-{
-    tex_coords_id = texCoordsId_;
-}
-
-template<class T, GLenum T_primitive>
-void geometry<T, T_primitive>::set_vertex_normals(GLuint normalsId_)
-{
-    normals_id = normalsId_;
 }
 
 template<class T, GLenum T_primitive>
@@ -133,65 +113,13 @@ void geometry<T, T_primitive>::set_vertex_normals(void* data, long size)
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 
-template<class T, GLenum T_primitive>
-GLuint geometry<T, T_primitive>::get_positions_id() const
-{
-    return positions_id;
-}
-
-template<class T, GLenum T_primitive>
-GLuint geometry<T, T_primitive>::get_tex_coords_id() const {
-    return tex_coords_id;
-}
-
-template<class T, GLenum T_primitive>
-GLuint geometry<T, T_primitive>::get_normals_id() const
-{
-    return normals_id;
-}
-
-template<class T, GLenum T_primitive>
-GLsizei geometry<T, T_primitive>::get_count() const {
-    return count;
-}
-
-template<class T, GLenum T_primitive>
-GLint geometry<T, T_primitive>::get_dimensions() const
-{
-    return dimensions;
-}
-
-template <class T>
-buffer_object_builder<T>::buffer_object_builder(std::vector<T> data_)
-{
-    data = data_;
-}
-
-template <class T>
-void* buffer_object_builder<T>::get_data()
-{
-    return &data[0];
-}
-
-template <class T>
-GLsizeiptr buffer_object_builder<T>::get_size()
-{
-    return data.size() * sizeof(T);
-}
-
-template <class T>
-GLsizeiptr buffer_object_builder<T>::get_count()
-{
-    return data.size();
-}
-
 template <class T>
 GLuint buffer_object_builder<T>::build()
 {
     GLuint id;
     glGenBuffers(1, &id);
     glBindBuffer(GL_ARRAY_BUFFER, id);
-    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(T), &data[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, _data.size() * sizeof(T), &_data[0], GL_STATIC_DRAW);
     return id;
 }
 
@@ -215,6 +143,13 @@ template <class T>
 geometry_builder<T>& geometry_builder<T>::operator<<(const std::vector<T>& v)
 {
     data.top().insert(data.top().end(), v.begin(), v.end());
+    return *this;
+}
+
+template <class T>
+geometry_builder<T>& geometry_builder<T>::append(const geometry<T>& g)
+{
+    data.top().insert(data.top().end(), g.v.begin(), v.end());
     return *this;
 }
 
@@ -280,6 +215,13 @@ std::unique_ptr<geometry<T>> make_box(int nx, int ny, int nz)
     geomb.begin().make_grid(nx, nz).transform(rotation(-90.0f, 1.0f, 0.0f, 0.0f)).transform(translation(0.0f, (T)ny, 0.0f)).end();
     geomb.transform(translation((T)-nx / (T)2, (T)-ny / (T)2, (T)nz / (T)2));
     geomb.end();
+    return geomb.build();
+}
+
+template<class T>
+std::unique_ptr<geometry<T>> make_disco_sphere(int nlong, int nlat)
+{
+    auto geomb = geometry_builder<T>{3};
     return geomb.build();
 }
 
