@@ -372,8 +372,7 @@ clipping_volume rendering_scene::fit_all_adapter::adapt(clipping_volume cv, floa
     if (wh_ratio > 1.0f) {
         cv.left = cv.left * wh_ratio;
         cv.right = cv.right * wh_ratio;
-    }
-    else {
+    } else {
         cv.bottom = cv.bottom / wh_ratio;
         cv.top = cv.top / wh_ratio;
     }

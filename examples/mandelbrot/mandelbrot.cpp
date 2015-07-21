@@ -51,7 +51,7 @@ void main(void)
     for (; i < max_i; i++) {
         z = vec2(z.x*z.x - z.y*z.y, 2*z.x*z.y) + c;
         if (length(z) > 2.0f) {
-            gl_FragColor = vec4(1.0f, 10.0f*float(i)/float(max_i), 1.0f, 1.0f);
+            gl_FragColor = vec4(0.5f, 10.0f*float(i)/float(max_i), 0.5f, 1.0f);
         };
     }
 }
@@ -73,7 +73,7 @@ int main()
 {
     auto engine = std::make_unique<yae::sdl_engine>();
     auto window = engine->create_simple_window();
-    auto cv = yae::clipping_volume{ -2.5f, 1.5f, -1.5f, 1.5f, -1.0f, 1.0f };
+    auto cv = yae::clipping_volume{ -2.5f, 2.5f, -2.5f, 2.5f, -1.0f, 1.0f };
     window->close_when_keydown();
 
     yae::buffer_object_builder<float> v({ -5.0f, -5.0f, 5.0f, -5.0f, 5.0f, 5.0f, -5.0f, 5.0f });
@@ -93,6 +93,12 @@ int main()
     auto nre = std::make_shared<yae::node_rendering_element>("mandelbrot_canvas", root, prog, cam);
     scene->add_element(cre);
     scene->add_element(nre);
+
+    cam->move_up(0.654f);
+    cam->move_left(0.088f);
+    window->set_render_callback([&](yae::rendering_context& ctx) {
+        cam->open(1.0f + sin(ctx.elapsed_time_seconds)*0.04);
+    });
 
     window->add_scene(scene);
 
