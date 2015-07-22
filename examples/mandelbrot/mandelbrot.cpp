@@ -98,7 +98,7 @@ int main()
     cam->move_up(0.654f);
     cam->move_left(0.088f);
     window->set_render_callback([&](yae::rendering_context& ctx) {
-        cam->open(1.0f + sin(ctx.elapsed_time_seconds)*0.04);
+        cam->open(1.0f + sin(ctx.elapsed_time_seconds)*0.04f);
     });
 
     window->add_scene(scene);

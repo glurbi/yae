@@ -11,7 +11,7 @@ int main()
     auto cv = yae::clipping_volume{ -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 100.0f };
     window->close_when_keydown();
 
-    auto box = yae::make_box<float>(10, 20, 5);
+    auto box = yae::make_box<float>(10, 20, 5).build();
     auto node = std::make_shared<yae::geometry_node<float>>(std::move(box));
     auto root = std::make_shared<yae::group>();
     root->set_transform_callback([](yae::rendering_context& ctx) {

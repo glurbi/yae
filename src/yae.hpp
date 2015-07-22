@@ -20,7 +20,7 @@ void check_for_opengl_errors();
 class rendering_context;
 class program;
 class shader_program;
-class window;
+struct window;
     
 class timer {
 public:
@@ -259,7 +259,7 @@ void rendering_scene::associate_camera(std::shared_ptr<camera> cam, window* win,
     auto cb = [=](yae::rendering_context& ctx) {
         int win_w = win->width();
         int win_h = win->height();
-        _viewport.x = vpr.x_percent * win_w;
+        _viewport.x = static_cast<int>(vpr.x_percent * win_w);
         _viewport.y = vpr.y_percent * win_h;
         _viewport.w = vpr.width_percent * win_w;
         _viewport.h = vpr.height_percent * win_h;
