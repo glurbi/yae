@@ -9,7 +9,7 @@
 
 namespace yae {
 
-enum vertex_attribute {
+enum vertex_attribute : GLuint {
     POSITION,
     TEXCOORD,
     NORMAL
@@ -155,6 +155,14 @@ struct geometry_builder {
         return std::vector<T>(_data.top());
     }
 
+    geometry_builder<T>& append(const vector3<T>& v)
+    {
+        _data.top().push_back(v.x());
+        _data.top().push_back(v.y());
+        _data.top().push_back(v.z());
+        return *this;
+    }
+
     geometry_builder<T>& append(const std::vector<T>& v)
     {
         _data.top().insert(_data.top().end(), v.begin(), v.end());
@@ -236,9 +244,30 @@ geometry_builder<T> make_box(int nx, int ny, int nz)
 }
 
 template<class T>
-geometry_builder<T> make_disco_sphere(int nlong, int nlat)
+geometry_builder<T> make_uv_sphere(int nlong, int nlat)
 {
+    auto s = [](T teta, T phi) {
+        // cf http://en.wikipedia.org/wiki/Sphere
+        T x = static_cast<T>(1.0 * sin(teta) * cos(phi));
+        T y = static_cast<T>(1.0 * sin(teta) * sin(phi));
+        T z = static_cast<T>(1.0 * cos(teta));
+        return vector3<T>(x, y, z);
+    };
     auto geomb = geometry_builder<T>{3};
+    geomb.begin();
+    const T pi = static_cast<T>(3.14159265359);
+    T step_long = 2 * pi / nlong;
+    T step_lat = pi / nlat;
+    for (int i = 0; i < nlong; i++) {
+        for (int j = 0; j < nlat; j++) {
+            T teta = j * step_lat;
+            T phi = i * step_long;
+            geomb.append(s(teta, phi));
+            geomb.append(s(teta + step_lat, phi));
+            geomb.append(s(teta + step_lat, phi + step_long));
+            geomb.append(s(teta, phi + step_long));
+        }
+    }
     return geomb;
 }
 
