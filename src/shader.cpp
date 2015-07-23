@@ -234,7 +234,7 @@ void flat_shading_program::render(const geometry<float>& geometry, rendering_con
     glUniformMatrix4fv(mv_uniform, 1, false, ctx.mv().m);
 
     GLuint light_dir_uniform = glGetUniformLocation(id, "lightDir");
-    glUniform3f(light_dir_uniform, ctx.dir.v[0], ctx.dir.v[1], ctx.dir.v[2]);
+    glUniform3f(light_dir_uniform, ctx.dir.x(), ctx.dir.y(), ctx.dir.z());
 
     GLuint color_uniform = glGetUniformLocation(id, "color");
     glUniform3f(color_uniform, col.r(), col.g(), col.b());
