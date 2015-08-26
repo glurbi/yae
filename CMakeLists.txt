@@ -16,10 +16,12 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED glew32)
 find_package(SDL2 REQUIRED)
+find_package(GTEST REQUIRED)
 
 include_directories(${SDL2_INCLUDE_PATH})
 include_directories(${GLEW_INCLUDE_PATH})
 
 add_subdirectory (src)
+add_subdirectory (tests)
 add_subdirectory (examples)
 
