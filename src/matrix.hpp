@@ -84,7 +84,7 @@ std::ostream& operator<<(std::ostream& os, const vector3<T>& v)
 template<class T>
 inline vector3<T> operator+(const vector3<T>& v1, const vector3<T>& v2)
 {
-    return vector3<T>(v1.x() + v1.x(), v2.y() + v2.y(), v1.z() + v2.z());
+    return vector3<T>(v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z());
 }
 
 template<class T>
