@@ -2,49 +2,36 @@
 #define _matrix_hpp_
 
 #include <iostream>
+#include <array>
 #include <cstring>
 
 namespace yae {
     
 template<class T>
 struct vector3 {
-
-    inline vector3() { v[0] = (T)0; v[1] = (T)0; v[2] = (T)0; }
-
-    inline vector3(T x, T y, T z) { v[0] = x; v[1] = y; v[2] = z; }
-
-    inline vector3(T* tp) { v[0] = tp[0]; v[1] = tp[1]; v[2] = tp[2]; }
-
-    inline vector3(const vector3<T>& vec3) { vec3.copy(v); }
-
+    inline vector3() : v({ (T)0, (T)0, (T)0 }) {}
+    inline vector3(T x, T y, T z) : v({ x, y, z }) {}
+    inline vector3(T* tp) { memcpy(v.data(), tp, 3 * sizeof(T)); }
+    inline vector3(const vector3<T>& vec3) { vec3.copy(v.data()); }
     inline T x() const { return v[0]; }
     inline T y() const { return v[1]; }
     inline T z() const { return v[2]; }
-
-    inline void copy(T* dest) const { memcpy(dest, v, 3 * sizeof(T)); }
-
+    inline void copy(T* dest) const { memcpy(dest, v.data(), 3 * sizeof(T)); }
 private:
-    T v[3];
+    std::array<T, 3> v;
 };
 
 template<class T>
 struct vector4 {
-
-    inline vector4(T x, T y, T z, T w) { v[0] = x; v[1] = y; v[2] = z; v[3] = w; }
-
-    inline vector4(const vector3<T>& vec3, T w) { v[0] = vec3.x(); v[1] = vec3.y(); v[2] = vec3.z(); v[3] = w; }
-
-    inline vector4(const vector3<T>& vec3) : vector4(vec3, (T)1) {}
-
+    inline vector4(T x, T y, T z, T w) : v({ x, y, z, w }) {}
+    inline vector4(const vector3<T>& vec3, T w) { vec3.copy(v.data()); v[3] = w; }
     inline T x() const { return v[0]; }
     inline T y() const { return v[1]; }
     inline T z() const { return v[2]; }
     inline T w() const { return v[3]; }
-
-    inline void copy(T* dest) const { memcpy(dest, v, 4 * sizeof(T)); }
-
+    inline void copy(T* dest) const { memcpy(dest, v.data(), 4 * sizeof(T)); }
 private:
-    T v[4];
+    std::array<T, 4> v;
 };
 
 template<class T>
