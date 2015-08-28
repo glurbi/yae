@@ -15,11 +15,12 @@ enum vertex_attribute : GLuint {
     NORMAL
 };
 
-template<class T, GLenum T_primitive = GL_QUADS>
+template<class T>
 struct geometry {
 
-	geometry(GLsizei count, GLint dimensions)
-        : count(count), _positions_id(0), _tex_coords_id(0), _normals_id(0), dimensions(dimensions)
+	geometry(GLsizei count, GLint dimensions, GLenum primitive_type)
+    : count(count), _positions_id(0), _tex_coords_id(0),
+      _normals_id(0), dimensions(dimensions), primitive_type(primitive_type)
     {}
 
     ~geometry()
@@ -90,12 +91,18 @@ struct geometry {
         return dimensions;
     }
 
+    inline GLuint get_primitive_type() const
+    {
+        return primitive_type;
+    }
+
 private:
 	GLuint _positions_id;
 	GLuint _tex_coords_id;
 	GLuint _normals_id;
     GLsizei count;
     GLint dimensions;
+    GLuint primitive_type;
 };
 
 template<class T>
@@ -136,8 +143,8 @@ private:
 template<class T>
 struct geometry_builder {
 
-    geometry_builder(GLint dim)
-        : _dim(dim)
+    geometry_builder(GLint dim, GLenum primitive_type)
+    : _dim(dim), primitive_type(primitive_type)
     {
         _data.push(std::vector<T>());
     }
@@ -145,7 +152,7 @@ struct geometry_builder {
     std::unique_ptr<geometry<T>> build()
     {
         auto b = buffer_object_builder<T> { _data.top() };
-        auto g = std::make_unique<geometry<T>>(_data.top().size() / _dim, _dim);
+        auto g = std::make_unique<geometry<T>>(_data.top().size() / _dim, _dim, primitive_type);
         g->set_vertex_positions(b.build());
         return g;
     }
@@ -201,6 +208,7 @@ struct geometry_builder {
 private:
     std::stack<std::vector<T>> _data;
     GLint _dim;
+    GLenum primitive_type;
 };
 
 template <class T>
@@ -236,7 +244,7 @@ geometry_builder<T> make_grid(int nx, int ny)
 template <class T>
 geometry_builder<T> make_box(int nx, int ny, int nz)
 {
-    auto geomb = geometry_builder<T>{3};
+    auto geomb = geometry_builder<T>{3, GL_QUADS};
     geomb.begin();
     geomb.begin().append(make_grid_data<T>(nx, ny)).end();
     geomb.begin().append(make_grid_data<T>(nz, ny)).transform(rotation(90.0f, 0.0f, 1.0f, 0.0f)).end();
@@ -259,7 +267,7 @@ geometry_builder<T> make_uv_sphere(int nlong, int nlat)
         T z = static_cast<T>(1.0 * cos(teta));
         return vector3<T>(x, y, z);
     };
-    auto geomb = geometry_builder<T>{3};
+    auto geomb = geometry_builder<T>{3, GL_QUADS};
     geomb.begin();
     const T pi = static_cast<T>(3.14159265359);
     T step_long = 2 * pi / nlong;
@@ -281,7 +289,7 @@ geometry_builder<T> make_uv_sphere(int nlong, int nlat)
 template<class T>
 geometry_builder<T> make_octahedron_sphere(int n)
 {
-    auto geomb = geometry_builder<T>{3};
+    auto geomb = geometry_builder<T>{3, GL_TRIANGLES};
     std::function<void(int, triangle<T>&)> refine = [&](int depth, triangle<T>& tr)
     {
         if (depth == n)

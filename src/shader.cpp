@@ -100,7 +100,7 @@ void monochrome_program::render(const geometry<float>& geometry, rendering_conte
     glEnableVertexAttribArray(vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.get_positions_id());
     glVertexAttribPointer(vertex_attribute::POSITION, geometry.get_dimensions(), GL_FLOAT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_QUADS, 0, geometry.get_count());
+    glDrawArrays(geometry.get_primitive_type(), 0, geometry.get_count());
     glDisableVertexAttribArray(vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glUseProgram(id);
@@ -176,7 +176,7 @@ void texture_program::render(const geometry<float>& geometry, rendering_context&
     glEnableVertexAttribArray(vertex_attribute::TEXCOORD);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.get_tex_coords_id());
     glVertexAttribPointer(vertex_attribute::TEXCOORD, geometry.get_dimensions(), GL_FLOAT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_QUADS, 0, 4);
+    glDrawArrays(geometry.get_primitive_type(), 0, 4);
     glDisableVertexAttribArray(vertex_attribute::POSITION);
     glDisableVertexAttribArray(vertex_attribute::TEXCOORD);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -245,7 +245,7 @@ void flat_shading_program::render(const geometry<float>& geometry, rendering_con
     glEnableVertexAttribArray(vertex_attribute::NORMAL);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.get_normals_id());
     glVertexAttribPointer(vertex_attribute::NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_QUADS, 0, geometry.get_count());
+    glDrawArrays(geometry.get_primitive_type(), 0, geometry.get_count());
     glDisableVertexAttribArray(vertex_attribute::POSITION);
     glDisableVertexAttribArray(vertex_attribute::NORMAL);
     glBindBuffer(GL_ARRAY_BUFFER, 0);

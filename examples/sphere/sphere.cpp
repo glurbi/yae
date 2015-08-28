@@ -11,19 +11,34 @@ int main()
     auto cv = yae::clipping_volume{ -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 100.0f };
     window->close_when_keydown();
 
-    auto uvsphere = yae::make_uv_sphere<float>(50, 10).build();
-    auto octasphere = yae::make_octahedron_sphere<float>(0).build();
-    //auto node = std::make_shared<yae::geometry_node<float>>(std::move(uvsphere));
-    auto node = std::make_shared<yae::geometry_node<float>>(std::move(octasphere));
-    auto root = std::make_shared<yae::group>();
-    root->set_transform_callback([](yae::rendering_context& ctx) {
+    auto transform_fun = [](yae::rendering_context& ctx) {
         float f = (float)ctx.elapsed_time_seconds;
         return yae::multm(
-            yae::rotation(1.0f*f, 1.0f, 0.0f, 0.0f),
-            yae::rotation(2.0f*f, 0.0f, 1.0f, 0.0f),
-            yae::rotation(5.0f*f, 0.0f, 0.0f, 1.0f));
-    });
-    root->add(node);
+            yae::rotation(10.0f*f, 1.0f, 0.0f, 0.0f),
+            yae::rotation(20.0f*f, 0.0f, 1.0f, 0.0f),
+            yae::rotation(50.0f*f, 0.0f, 0.0f, 1.0f));
+    };
+
+    auto uvsphere = yae::make_uv_sphere<float>(50, 10).build();
+    auto octasphere = yae::make_octahedron_sphere<float>(3).build();
+    auto uvnode = std::make_shared<yae::geometry_node<float>>(std::move(uvsphere));
+    auto octanode = std::make_shared<yae::geometry_node<float>>(std::move(octasphere));
+    auto uvgroup = std::make_shared<yae::group>();
+    uvgroup->set_transform_callback(transform_fun);
+    uvgroup->add(uvnode);
+    auto octagroup = std::make_shared<yae::group>();
+    octagroup->set_transform_callback(transform_fun);
+    octagroup->add(octanode);
+
+    auto root = std::make_shared<yae::group>();
+    auto leftgroup = std::make_shared<yae::group>();
+    leftgroup->set_transform_callback([](yae::rendering_context& ctx) { return yae::translation(-1.5f, 0.0f, 0.0f); });
+    leftgroup->add(uvgroup);
+    auto rightgroup = std::make_shared<yae::group>();
+    rightgroup->set_transform_callback([](yae::rendering_context& ctx) { return yae::translation(1.5f, 0.0f, 0.0f); });
+    rightgroup->add(octagroup);
+    root->add(leftgroup);
+    root->add(rightgroup);
 
     auto prog = std::make_shared<yae::wireframe_program>();
     prog->set_solid_color(yae::color4f(0.5f, 0.5f, 0.5f));

@@ -78,7 +78,7 @@ int main()
     window->close_when_keydown();
 
     yae::buffer_object_builder<float> v({ -5.0f, -5.0f, 5.0f, -5.0f, 5.0f, 5.0f, -5.0f, 5.0f });
-    auto canvas = std::make_shared<yae::geometry<float>>(v.get_size() / 2, 2);
+    auto canvas = std::make_shared<yae::geometry<float>>(v.get_size() / 2, 2, GL_QUADS);
     canvas->set_vertex_positions(v.build());
     auto node = std::make_shared<yae::geometry_node<float>>(std::move(canvas));
     auto root = std::make_shared<yae::group>();

@@ -17,7 +17,7 @@ int main()
     auto hero_texture = std::make_shared<yae::texture>(pixels, width, height);
 
     yae::buffer_object_builder<float> b({ -50.0f, -50.0f, 50.0f, -50.0f, 50.0f, 50.0f, -50.0f, 50.0f });
-    auto multi_hero = std::make_shared<yae::geometry<float>>(b.get_size() / 2, 2);
+    auto multi_hero = std::make_shared<yae::geometry<float>>(b.get_size() / 2, 2, GL_QUADS);
     multi_hero->set_vertex_positions(b.build());
     multi_hero->set_vertex_tex_coords(b.build());
     auto node = std::make_shared<yae::geometry_node<float>>(multi_hero);
