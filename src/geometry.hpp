@@ -170,9 +170,9 @@ struct geometry_builder {
         return *this;
     }
 
-    geometry_builder<T>& append(triangle<T>& tr)
+    geometry_builder<T>& append(const triangle<T>& tr)
     {
-        _data.top().insert(_data.top().end(), tr.data(), tr.data()+9);
+        tr.append_to(_data.top());
         return *this;
     }
 

@@ -260,9 +260,9 @@ void rendering_scene::associate_camera(std::shared_ptr<camera> cam, window* win,
         int win_w = win->width();
         int win_h = win->height();
         _viewport.x = static_cast<int>(vpr.x_percent * win_w);
-        _viewport.y = vpr.y_percent * win_h;
-        _viewport.w = vpr.width_percent * win_w;
-        _viewport.h = vpr.height_percent * win_h;
+        _viewport.y = static_cast<int>(vpr.y_percent * win_h);
+        _viewport.w = static_cast<int>(vpr.width_percent * win_w);
+        _viewport.h = static_cast<int>(vpr.height_percent * win_h);
         float ar = (float)_viewport.w / _viewport.h;
         _camera->cv = ClippingVolumeAdapter::adapt(_desired_cv, ar);
     };

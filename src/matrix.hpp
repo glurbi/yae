@@ -2,6 +2,7 @@
 #define _matrix_hpp_
 
 #include <iostream>
+#include <cstring>
 
 namespace yae {
     
@@ -14,11 +15,13 @@ struct vector3 {
 
     inline vector3(T* tp) { v[0] = tp[0]; v[1] = tp[1]; v[2] = tp[2]; }
 
+    inline vector3(const vector3<T>& vec3) { vec3.copy(v); }
+
     inline T x() const { return v[0]; }
     inline T y() const { return v[1]; }
     inline T z() const { return v[2]; }
 
-    inline void copy(T* dest) { dest[0] = v[0]; dest[1] = v[1]; dest[2] = v[2]; }
+    inline void copy(T* dest) const { memcpy(dest, v, 3 * sizeof(T)); }
 
 private:
     T v[3];
@@ -29,16 +32,16 @@ struct vector4 {
 
     inline vector4(T x, T y, T z, T w) { v[0] = x; v[1] = y; v[2] = z; v[3] = w; }
 
-    inline vector4(const vector3<T> vec3, T w) { v[0] = vec3.x(); v[1] = vec3.y(); v[2] = vec3.z(); v[3] = w; }
+    inline vector4(const vector3<T>& vec3, T w) { v[0] = vec3.x(); v[1] = vec3.y(); v[2] = vec3.z(); v[3] = w; }
 
-    inline vector4(const vector3<T> vec3) : vector4(vec3, (T)1) {}
+    inline vector4(const vector3<T>& vec3) : vector4(vec3, (T)1) {}
 
     inline T x() const { return v[0]; }
     inline T y() const { return v[1]; }
     inline T z() const { return v[2]; }
     inline T w() const { return v[3]; }
 
-    inline void copy(T* dest) { dest[0] = v[0]; dest[1] = v[1]; dest[2] = v[2]; dest[3] = v[3]; }
+    inline void copy(T* dest) const { memcpy(dest, v, 4 * sizeof(T)); }
 
 private:
     T v[4];
@@ -58,7 +61,8 @@ struct triangle {
     inline vector3<T> v2() { return vector3<T>(&t[3]); }
     inline vector3<T> v3() { return vector3<T>(&t[6]); }
 
-    inline T* data() { return t; }
+    inline void copy(T* dest) const { memcpy(dest, &t[0], 9*sizeof(T)); }
+    inline void append_to(std::vector<T>& vec) const { vec.insert(vec.end(), t, t + 9); }
 
 private:
     T t[9];
