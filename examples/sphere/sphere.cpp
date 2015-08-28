@@ -11,15 +11,17 @@ int main()
     auto cv = yae::clipping_volume{ -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 100.0f };
     window->close_when_keydown();
 
-    auto sphere = yae::make_uv_sphere<float>(50, 10).build();
-    auto node = std::make_shared<yae::geometry_node<float>>(std::move(sphere));
+    auto uvsphere = yae::make_uv_sphere<float>(50, 10).build();
+    auto octasphere = yae::make_octahedron_sphere<float>(0).build();
+    //auto node = std::make_shared<yae::geometry_node<float>>(std::move(uvsphere));
+    auto node = std::make_shared<yae::geometry_node<float>>(std::move(octasphere));
     auto root = std::make_shared<yae::group>();
     root->set_transform_callback([](yae::rendering_context& ctx) {
         float f = (float)ctx.elapsed_time_seconds;
         return yae::multm(
-            yae::rotation(10.0f*f, 1.0f, 0.0f, 0.0f),
-            yae::rotation(20.0f*f, 0.0f, 1.0f, 0.0f),
-            yae::rotation(50.0f*f, 0.0f, 0.0f, 1.0f));
+            yae::rotation(1.0f*f, 1.0f, 0.0f, 0.0f),
+            yae::rotation(2.0f*f, 0.0f, 1.0f, 0.0f),
+            yae::rotation(5.0f*f, 0.0f, 0.0f, 1.0f));
     });
     root->add(node);
 

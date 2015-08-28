@@ -163,6 +163,12 @@ struct geometry_builder {
         return *this;
     }
 
+    geometry_builder<T>& append(triangle<T>& tr)
+    {
+        _data.top().insert(_data.top().end(), tr.data(), tr.data()+9);
+        return *this;
+    }
+
     geometry_builder<T>& append(const std::vector<T>& v)
     {
         _data.top().insert(_data.top().end(), v.begin(), v.end());
@@ -268,6 +274,42 @@ geometry_builder<T> make_uv_sphere(int nlong, int nlat)
             geomb.append(s(teta, phi + step_long));
         }
     }
+    geomb.end();
+    return geomb;
+}
+
+template<class T>
+geometry_builder<T> make_octahedron_sphere(int n)
+{
+    auto geomb = geometry_builder<T>{3};
+    std::function<void(int, triangle<T>&)> refine = [&](int depth, triangle<T>& tr)
+    {
+        if (depth == n)
+            geomb.append(tr);
+        else {
+            vector3<T> m1 = normalize(midpoint(tr.v2(), tr.v3()));
+            vector3<T> m2 = normalize(midpoint(tr.v3(), tr.v1()));
+            vector3<T> m3 = normalize(midpoint(tr.v1(), tr.v2()));
+            refine(depth + 1, triangle<T>(tr.v1(), m3, m2));
+            refine(depth + 1, triangle<T>(m3, tr.v2(), m1));
+            refine(depth + 1, triangle<T>(m1, m2, m3));
+            refine(depth + 1, triangle<T>(m2, m1, tr.v3()));
+        }
+    };
+    vector3<T> v1 = { (T)0, (T)1, (T)0 };
+    vector3<T> v2 = { (T)0, (T)0, (T)1 };
+    vector3<T> v3 = { (T)1, (T)0, (T)0 };
+    vector3<T> v4 = { (T)0, (T)0, (T)-1 };
+    vector3<T> v5 = { (T)-1, (T)0, (T)0 };
+    vector3<T> v6 = { (T)0, (T)-1, (T)0 };
+    refine(0, triangle<T>(v1, v2, v3));
+    refine(0, triangle<T>(v1, v3, v4));
+    refine(0, triangle<T>(v1, v4, v5));
+    refine(0, triangle<T>(v1, v2, v5));
+    refine(0, triangle<T>(v6, v3, v2));
+    refine(0, triangle<T>(v6, v2, v5));
+    refine(0, triangle<T>(v6, v5, v4));
+    refine(0, triangle<T>(v6, v4, v3));
     return geomb;
 }
 

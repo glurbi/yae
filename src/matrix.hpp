@@ -45,6 +45,26 @@ private:
 };
 
 template<class T>
+struct triangle {
+
+    inline triangle(vector3<T> v1, vector3<T> v2, vector3<T> v3)
+    {
+        v1.copy(&t[0]);
+        v2.copy(&t[3]);
+        v3.copy(&t[6]);
+    }
+
+    inline vector3<T> v1() { return vector3<T>(&t[0]); }
+    inline vector3<T> v2() { return vector3<T>(&t[3]); }
+    inline vector3<T> v3() { return vector3<T>(&t[6]); }
+
+    inline T* data() { return t; }
+
+private:
+    T t[9];
+};
+
+template<class T>
 struct matrix44 {
     T m[16];
 };
@@ -75,6 +95,12 @@ struct color4 : vector4<T> {
 };
 
 template<class T>
+inline vector3<T> midpoint(const vector3<T>& v1, const vector3<T>& v2)
+{
+    return (v1 + v2) / (static_cast<T>(2));
+}
+
+template<class T>
 std::ostream& operator<<(std::ostream& os, const vector3<T>& v)
 {
     os << '[' << v.x() << ' ' << v.y() << ' ' << v.z() << ']';
@@ -100,6 +126,13 @@ inline vector3<T> operator*(const vector3<T>& v, T t)
 }
 
 template<class T>
+inline vector3<T> operator/(const vector3<T>& v, T t)
+{
+    return vector3<T>(v.x()/t, v.y()/t, v.z()/t);
+}
+
+
+template<class T>
 inline vector3<T> operator*(const matrix44<T>& m, const vector3<T>& v)
 {
     vector4<T> v4(v, (T)1);
@@ -110,7 +143,7 @@ inline vector3<T> operator*(const matrix44<T>& m, const vector3<T>& v)
 }
 
 template<class T>
-inline vector3<T> normalize(vector3<T> v)
+inline vector3<T> normalize(const vector3<T>& v)
 {
     T norm = sqrt(v.x() * v.x() + v.y() * v.y() + v.z() * v.z());
     return vector3<T>(v.x() / norm, v.y() / norm, v.z() / norm);
