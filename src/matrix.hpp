@@ -9,27 +9,35 @@ namespace yae {
     
 template<class T>
 struct vector3 {
+
     inline vector3() : v({ (T)0, (T)0, (T)0 }) {}
     inline vector3(T x, T y, T z) : v({ x, y, z }) {}
-    inline vector3(T* tp) { memcpy(v.data(), tp, 3 * sizeof(T)); }
+    inline vector3(const T* tp) { memcpy(v.data(), tp, 3 * sizeof(T)); }
     inline vector3(const vector3<T>& vec3) { vec3.copy(v.data()); }
+
     inline T x() const { return v[0]; }
     inline T y() const { return v[1]; }
     inline T z() const { return v[2]; }
-    inline void copy(T* dest) const { memcpy(dest, v.data(), 3 * sizeof(T)); }
+
+    inline void append_to(T* dest) const { memcpy(dest, v.data(), 3 * sizeof(T)); }
+
 private:
     std::array<T, 3> v;
 };
 
 template<class T>
 struct vector4 {
+
     inline vector4(T x, T y, T z, T w) : v({ x, y, z, w }) {}
-    inline vector4(const vector3<T>& vec3, T w) { vec3.copy(v.data()); v[3] = w; }
+    inline vector4(const vector3<T>& vec3, T w) { vec3.append_to(v.data()); v[3] = w; }
+
     inline T x() const { return v[0]; }
     inline T y() const { return v[1]; }
     inline T z() const { return v[2]; }
     inline T w() const { return v[3]; }
-    inline void copy(T* dest) const { memcpy(dest, v.data(), 4 * sizeof(T)); }
+
+    inline void append_to(T* dest) const { memcpy(dest, v.data(), 4 * sizeof(T)); }
+
 private:
     std::array<T, 4> v;
 };
@@ -37,22 +45,18 @@ private:
 template<class T>
 struct triangle {
 
-    inline triangle(vector3<T> v1, vector3<T> v2, vector3<T> v3)
-    {
-        v1.copy(&t[0]);
-        v2.copy(&t[3]);
-        v3.copy(&t[6]);
-    }
+    inline triangle(const vector3<T>& v1, const vector3<T>& v2, const vector3<T>& v3)
+        { v1.append_to(&v[0]); v2.append_to(&v[3]); v3.append_to(&v[6]); }
 
-    inline vector3<T> v1() { return vector3<T>(&t[0]); }
-    inline vector3<T> v2() { return vector3<T>(&t[3]); }
-    inline vector3<T> v3() { return vector3<T>(&t[6]); }
+    inline vector3<T> v1() const { return vector3<T>(&v[0]); }
+    inline vector3<T> v2() const { return vector3<T>(&v[3]); }
+    inline vector3<T> v3() const { return vector3<T>(&v[6]); }
 
-    inline void copy(T* dest) const { memcpy(dest, &t[0], 9*sizeof(T)); }
-    inline void append_to(std::vector<T>& vec) const { vec.insert(vec.end(), t, t + 9); }
+    inline void append_to(T* dest) const { memcpy(dest, &t[0], 9*sizeof(T)); }
+    inline void append_to(std::vector<T>& vec) const { vec.insert(vec.end(), v.data(), v.data() + 9); }
 
 private:
-    T t[9];
+    std::array<T, 9> v;
 };
 
 template<class T>

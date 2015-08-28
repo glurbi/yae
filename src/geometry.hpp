@@ -186,7 +186,7 @@ struct geometry_builder {
     {
         for (typename std::vector<T>::size_type i = 0; i < _data.top().size(); i += _dim) {
             vector3f v3 = tr * vector3f(&_data.top()[i]);
-            v3.copy(&_data.top()[i]);
+            v3.append_to(&_data.top()[i]);
         }
         return *this;
     }
